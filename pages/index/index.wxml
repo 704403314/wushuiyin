@@ -1,0 +1,45 @@
+<view class="container" style="background-color: rgb(255, 255, 255);">
+    <!-- <canvas type="webgl" id="myCanvas"></canvas> -->
+   
+        <view class="tip">
+  <text>点击右上方 ·•·，将小程序添加至我的小程序</text>
+  <text>，或分享给好友</text>
+</view>
+  <form bindsubmit="formSubmitBefore">
+    <view class="page-section">
+    <view class="page-section-title">• 目前支持：抖音｜快手｜网易云｜酷狗｜QQ音乐｜B站｜小红书｜微视｜微博｜西瓜｜火山等平台的视频下载; <text>\n\n</text>• MV转音频：复制音乐平台vip歌曲的MV链接，一键解析后，点击"保存音频到相册"，可以欣赏vip歌曲
+        <text>\n\n</text>• MV转MP3：点击"复制音频链接"，在浏览器中打开，也可下载对应的音频(mp3格式) </view>
+    <view class="textarea-wrp">
+      <textarea placeholder="请输入或粘贴短视频分享的链接"  name="videoUrl"   auto-height value="{{content}}"  placeholder-style="color: #999999;font-size:14px;" maxlength="500"  class="text-style"  />
+    </view>
+    <!-- <view>已下载{{progress}}%</view> -->
+    <view hidden="{{progressHidden}}">
+        <progress percent='{{progress}}' show-info />
+    </view>
+    <view style="width: 100%; height: 100%; display: flex; align-items: center">
+        
+        <button class="mini-btn"  size="mini" bindtap="cleanCon"  style="margin-left: 13px;height: 40px;line-height: 40px;text-align: center;width:145px;margin-top: 30px;background-color: rgb(170, 214, 10);">清空内容</button>
+        <button class="mini-btn" size="mini"  form-type="submit" style="height: 40px;line-height: 40px;margin-top: 30px;width:145px;text-align: center;">一键解析</button>
+    </view>
+  </view>
+ 
+    
+  </form>
+  
+  <view class="buttons" style="margin-top: 10px;"  wx:if="{{buttonShow}}">
+    <button class="copy" style="background-color: rgb(136, 95, 6);font-size: 13px;" bindtap="copyLinkFunc">复制视频链接</button>
+    <!-- <button bindtap="downloadVideoFunc" class="download" style="background-color: rgb(63, 80, 2);margin-left: 10px;">保存到相册</button> -->
+    <button bindtap="copyMusic" class="download" style="background-color: rgb(136, 95, 6);margin-left: 10px;font-size: 13px;">复制音频链接</button>
+    
+  </view>
+  <view class="buttons" wx:if="{{buttonShow}}">
+    <button bindtap="downloadVideoFunc" class="download" style="background-color: rgb(7, 134, 28);margin-top: 10px;font-size: 13px;">保存视频到相册</button>
+
+    <button bindtap="downloadMP4Func" class="download" style="margin-left: 10px;background-color: rgb(7, 134, 28);margin-top: 10px;font-size: 13px;">保存音频到相册</button>
+
+  </view>
+  <loading hidden="{{hidden}}">
+        处理中,请耐心等待...
+  </loading>
+  
+</view>

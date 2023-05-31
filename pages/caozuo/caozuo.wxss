@@ -1,0 +1,45 @@
+.tip {
+    /* position: fixed; */
+    top: 1px;
+    /* left: 60px; */
+    /* background-color: #fff; */
+    
+    padding: 10px;
+    font-size: 18px;
+    color: rgb(228, 114, 8);
+  }
+
+  .content {
+    font-size: 16px;
+    /* margin-top: 1px; */
+    padding-left: 10px;
+    /* color: rgb(85, 58, 8); */
+    color: rgb(27, 133, 6);
+    line-height: 2;
+  }
+
+  .tip1 {
+    padding: 10px;
+    font-size: 18px;
+    color: rgb(228, 114, 8);
+  }
+
+  .content1 {
+    font-size: 16px;
+    padding-left: 10px;
+    color: rgb(27, 133, 6);
+    line-height: 2;
+  }
+
+  .tip2 {
+    padding: 10px;
+    font-size: 18px;
+    color: rgb(228, 114, 8);
+  }
+
+  .content2 {
+    font-size: 16px;
+    padding-left: 10px;
+    color: rgb(27, 133, 6);
+    line-height: 2;
+  }
