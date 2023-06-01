@@ -10,7 +10,7 @@
     <view class="page-section-title">• 目前支持：抖音｜快手｜网易云｜酷狗｜QQ音乐｜B站｜小红书｜微视｜微博｜西瓜｜火山等平台的视频下载; <text>\n\n</text>• MV转音频：复制音乐平台vip歌曲的MV链接，一键解析后，点击"保存音频到相册"，可以欣赏vip歌曲
         <text>\n\n</text>• 视频 | MV转MP3：点击"复制音频链接"，在浏览器中打开，也可下载对应的音频(mp3格式) </view>
     <view class="textarea-wrp">
-      <textarea placeholder="请粘贴短视频或音乐平台分享的链接"  name="videoUrl"   auto-height value="{{content}}"  placeholder-style="color: #999999;font-size:14px;" maxlength="500"  class="text-style"  />
+      <textarea placeholder="请粘贴手机端 短视频或音乐平台分享的链接"  name="videoUrl"   auto-height value="{{content}}"  placeholder-style="color: #999999;font-size:14px;" maxlength="500"  class="text-style"  />
     </view>
     <!-- <view>已下载{{progress}}%</view> -->
     <view hidden="{{progressHidden}}">
