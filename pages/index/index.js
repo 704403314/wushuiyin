@@ -48,7 +48,7 @@ Page({
         const that = this
         wx.showModal({
             title: "温馨提示", // 提示的标题
-            content: "1. 本平台提供免费下载功能，版权归各视频、音乐平台所有，视频｜音频仅供个人观看，学习使用。因用户滥用该功能，导致的侵权行为，由用户承担相关责任。" + "\r\n\r\n" +"2. 小程序会限制大文件下载，如果遇到类似问题，可以复制解析后的链接，在浏览器中打开，下载视频。", // 提示的内容
+            content: "1. 本平台提供免费下载功能，版权归各视频、音乐平台所有，视频｜音频仅供个人观看，学习使用。因用户滥用该功能，导致的侵权行为，由用户承担相关责任。" + "\r\n\r\n" +"2. 下载的文件超过500M，可能会失败，可以复制解析后的链接，在浏览器中打开，下载资源。" + "\r\n\r\n" +"3. 遇到解析失败的情况，可以粘贴相同视频(音频)在其他APP的链接，重新解析。", // 提示的内容
             showCancel: false, // 是否显示取消按钮，默认true
             cancelText: "取消", // 取消按钮的文字，最多4个字符
             cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -191,7 +191,7 @@ Page({
         })
         const that = this 
         wx.downloadFile({
-            url: that.data.musicUrl, // 音频资源地址
+            url: that.data.musicUrl, // 音频资源地
             // filePath: wx.env.USER_DATA_PATH + '/videoCache/' +this.data.copyLink,
             success: res => {
               console.log('downloadFile成功回调res:', res)
@@ -234,9 +234,7 @@ Page({
                   })
                 }
               })
-                
-              
-              
+         
             },
             fail(e) {
               console.log('失败e', e)
@@ -245,8 +243,8 @@ Page({
                     progressHidden: false
                 })
               wx.showToast({
-                title: '视频保存失败了, 请点击复制链接在浏览器中打开',
-                duration:4000,
+                title: '音频保存失败了, 请重试或点击复制音频链接在浏览器中打开',
+                duration:4500,
                 icon:'none'
               })
             },
@@ -272,12 +270,27 @@ Page({
         const that = this 
         wx.downloadFile({
             url: that.data.saveUrl, // 视频资源地址
+            
             // filePath: wx.env.USER_DATA_PATH + '/videoCache/' +this.data.copyLink,
             success: res => {
               console.log('downloadFile成功回调res:', res)
               let FilePath = res.tempFilePath; // 下载到本地获取临时路径
               let fileManager = wx.getFileSystemManager();
-                //let FilePath = wx.env.USER_DATA_PATH + "/" + that.data.saveUrl.substring(that.data.saveUrl.length - 16)
+              if (res.statusCode === 504 || res.statusCode === 400 || res.statusCode === 500) {
+                // 执行下载成功后的操作
+                console.log('504');
+                that.setData({
+                    hidden: true,
+                    progressHidden: false
+                })
+                wx.showToast({
+                    title: '请求失败, 文件可能过大, 请点击复制视频链接在浏览器中打开',
+                    duration: 4500,
+                    icon: 'none'
+                  })
+                return
+              }
+
                 wx.saveVideoToPhotosAlbum({ // 保存到相册
                     filePath: FilePath,
                     success: file => {
@@ -287,6 +300,7 @@ Page({
                         })
                       console.log('saveVideoToPhotosAlbum成功回调file:', file)
                       console.log('FilePath:', FilePath)
+                      
                       wx.showToast({
                         title: '保存成功',
                         duration: 3000,
@@ -370,6 +384,8 @@ Page({
         })
         const that = this 
         var mp4MusicUrl = that.data.musicUrl.replace("/music/download", "/music/mp4/download")
+        // var mp4MusicUrl = mp4MusicUrl.replace("tankhui.cn", "tankhui.cn:8083")
+
         console.log("musicUrl mp4", mp4MusicUrl)
         wx.downloadFile({
             url: mp4MusicUrl, // 音频资源地址
