@@ -48,7 +48,7 @@ Page({
         const that = this
         wx.showModal({
             title: "温馨提示", // 提示的标题
-            content: "1. 本平台提供免费下载功能，版权归各视频、音乐平台所有，视频｜音频仅供个人观看，学习使用。因用户滥用该功能，导致的侵权行为，由用户承担相关责任。" + "\r\n\r\n" +"2. 下载的文件超过500M，可能会失败，可以复制解析后的链接，在浏览器中打开，下载资源。" + "\r\n\r\n" +"3. 遇到解析失败的情况，可以粘贴相同视频(音频)在其他APP的链接，重新解析。", // 提示的内容
+            content: "1. 本平台提供免费下载功能，版权归各视频、音乐平台所有，视频｜音频仅供个人观看，学习使用。因用户不当使用，导致的侵权行为，由用户承担相关责任。" + "\r\n\r\n" +"2. 下载的文件超过500M，可能会失败，可以复制解析后的链接，在浏览器中打开，下载资源。" + "\r\n\r\n" +"3. 遇到解析失败的情况，可以粘贴相同视频(或音频)在其他APP的链接，重新解析。", // 提示的内容
             showCancel: false, // 是否显示取消按钮，默认true
             cancelText: "取消", // 取消按钮的文字，最多4个字符
             cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -145,22 +145,63 @@ Page({
         })
     },
     copyLinkFunc: function(e) {
-        console.log(e)
-        wx.showToast({
-            title: '复制成功',
-          })
-      
-          // 下方为微信开发文档中的复制 API
-          wx.setClipboardData({
-            data: this.data.copyLink, //复制的数据
-            success: function (res) {
-              wx.getClipboardData({
-                success: function (res) {
-                    
+        // 在页面中定义激励视频广告
+        let videoAd = null
+        
+        // 在页面onLoad回调事件中创建激励视频广告实例
+        if (wx.createRewardedVideoAd) {
+            videoAd = wx.createRewardedVideoAd({
+                adUnitId: 'adunit-052ed3c0d5e20c89'
+            })
+            videoAd.onLoad(() => {})
+            videoAd.onError((err) => {
+                console.log("have error")
+                wx.showToast({
+                    title: '激励视频展示失败',
+                    duration:4000,
+                    icon:'none'
+                  })
+            })
+            videoAd.onClose((res) => {
+                if (res && res.isEnded) {
+                    // 正常播放结束,可以下发游戏奖励
+                    // 原始复制的代码
+                    console.log("激励了一次")
+                    wx.showToast({
+                        title: '复制成功',
+                    })
+                    // 下方为微信开发文档中的复制 API
+                    wx.setClipboardData({
+                        data: this.data.copyLink, //复制的数据
+                        success: function (res) {
+                        wx.getClipboardData({
+                            success: function (res) {
+                                
+                            }
+                        })
+                        }
+                    })
+                } else {
+                    // 播放中途退出,不下发游戏奖励
+                    console.log("播放中途退出,不下发游戏奖励")
+                    // videoAd.show()
                 }
-              })
-            }
-          })
+            })
+        }
+
+        // 用户触发广告后，显示激励视频广告
+        if (videoAd) {
+            videoAd.show().catch(() => {
+                // 失败重试
+                videoAd.load()
+                .then(() => videoAd.show())
+                .catch(err => {
+                    console.log('激励视频 广告显示失败')
+                })
+            })
+        }
+
+
 
     },
     copyMusic: function(e) {
@@ -260,9 +301,47 @@ Page({
 
     },
     downloadVideoFunc: function(e) {
+        // 在页面中定义激励视频广告
+        // let videoAd = null
         
-        console.log("downloadVideoFunc start")
-        // console.log("this.access:", this.access())
+        // // 在页面onLoad回调事件中创建激励视频广告实例
+        // if (wx.createRewardedVideoAd) {
+        //     videoAd = wx.createRewardedVideoAd({
+        //         adUnitId: 'adunit-052ed3c0d5e20c89'
+        //     })
+        //     videoAd.onLoad(() => {})
+        //     videoAd.onError((err) => {
+        //         console.log("have error")
+        //         wx.showToast({
+        //             title: '激励视频展示失败',
+        //             duration:4000,
+        //             icon:'none'
+        //           })
+        //     })
+        //     videoAd.onClose((res) => {
+        //         if (res && res.isEnded) {
+                    
+
+
+        //         } else {
+        //             // 播放中途退出,不下发游戏奖励
+        //             console.log("播放中途退出,不下发游戏奖励")
+        //         }
+        //     })
+        // }
+
+        // // 用户触发广告后，显示激励视频广告
+        // if (videoAd) {
+        //     videoAd.show().catch(() => {
+        //         // 失败重试
+        //         videoAd.load()
+        //         .then(() => videoAd.show())
+        //         .catch(err => {
+        //             console.log('激励视频 广告显示失败')
+        //         })
+        //     })
+        // }
+
         this.setData({
             hidden: false,
             progressHidden: false
@@ -270,13 +349,12 @@ Page({
         const that = this 
         wx.downloadFile({
             url: that.data.saveUrl, // 视频资源地址
-            
-            // filePath: wx.env.USER_DATA_PATH + '/videoCache/' +this.data.copyLink,
+        
             success: res => {
-              console.log('downloadFile成功回调res:', res)
-              let FilePath = res.tempFilePath; // 下载到本地获取临时路径
-              let fileManager = wx.getFileSystemManager();
-              if (res.statusCode === 504 || res.statusCode === 400 || res.statusCode === 500) {
+            console.log('downloadFile成功回调res:', res)
+            let FilePath = res.tempFilePath; // 下载到本地获取临时路径
+            let fileManager = wx.getFileSystemManager();
+            if (res.statusCode === 504 || res.statusCode === 400 || res.statusCode === 500) {
                 // 执行下载成功后的操作
                 console.log('504');
                 that.setData({
@@ -287,9 +365,9 @@ Page({
                     title: '请求失败, 文件可能过大, 请点击复制视频链接在浏览器中打开',
                     duration: 4500,
                     icon: 'none'
-                  })
+                })
                 return
-              }
+            }
 
                 wx.saveVideoToPhotosAlbum({ // 保存到相册
                     filePath: FilePath,
@@ -298,15 +376,15 @@ Page({
                             hidden: true,
                             progressHidden: false
                         })
-                      console.log('saveVideoToPhotosAlbum成功回调file:', file)
-                      console.log('FilePath:', FilePath)
-                      
-                      wx.showToast({
+                    console.log('saveVideoToPhotosAlbum成功回调file:', file)
+                    console.log('FilePath:', FilePath)
+                    
+                    wx.showToast({
                         title: '保存成功',
                         duration: 3000,
                         icon: 'success'
-                      })
-                      fileManager.unlink({ // 删除临时文件
+                    })
+                    fileManager.unlink({ // 删除临时文件
                         filePath: FilePath,
                         success(res) {
                             console.log(res,"unlink success")
@@ -314,15 +392,15 @@ Page({
                         fail(res) {
                             console.error(res,"unlink fail")
                         }
-                      })
+                    })
                     },
                     fail: err => {
                         that.setData({
                             hidden: true,
                             progressHidden: false
                         })
-                      console.log('saveVideoToPhotosAlbum失败回调err:', err)
-                      fileManager.unlink({ // 删除临时文件
+                    console.log('saveVideoToPhotosAlbum失败回调err:', err)
+                    fileManager.unlink({ // 删除临时文件
                         filePath: FilePath,
                         success(res) {
                             console.log(res,"unlink success")
@@ -333,44 +411,45 @@ Page({
                                 title: '视频保存失败, 请重试',
                                 duration: 4000,
                                 icon: 'none'
-                              })
+                            })
                         }
-                      })
-                      wx.showToast({
+                    })
+                    wx.showToast({
                         title: '视频保存失败, 请点击复制链接在浏览器中打开',
                         duration: 4000,
                         icon: 'none'
-                      })
+                    })
                     },
                     complete() {
                     //   wx.hideLoading()
                     }
-                  })
-              
-              
+                })
+            
+            
             },
             fail(e) {
-              console.log('失败e', e)
-              that.setData({
+            console.log('失败e', e)
+            that.setData({
                     hidden: true,
                     progressHidden: false
                 })
-              wx.showToast({
+            wx.showToast({
                 title: '视频保存失败了, 请点击复制链接在浏览器中打开',
                 duration:4000,
                 icon:'none'
-              })
+            })
             },
             complete() {
-              // wx.hideLoading();
+            // wx.hideLoading();
             }
-      }).onProgressUpdate((res) => {
-        // 下载进度更新时的回调函数
-        this.setData({
-          progress: res.progress
+        }).onProgressUpdate((res) => {
+            // 下载进度更新时的回调函数
+            this.setData({
+            progress: res.progress
+            });
         });
-      });
 
+            
 
     },
 
