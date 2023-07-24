@@ -144,6 +144,32 @@ Page({
             }
         })
     },
+    copyLinkFuncBefore: function(e) {
+        const that = this
+        wx.showModal({
+            title: "温馨提示", // 提示的标题
+            content: "只需观看一小段广告，即可复制链接", // 提示的内容
+            showCancel: true, // 是否显示取消按钮，默认true
+            cancelText: "取消", // 取消按钮的文字，最多4个字符
+            cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
+            confirmText: "知道了", // 确认按钮的文字，最多4个字符
+            confirmColor: "#576B95", // 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串
+            success: function (res) {
+                console.log("接口调用成功的回调函数");
+                if (res.confirm) {
+                    that.copyLinkFunc(e)
+                } else if (res.cancel) {
+                    return
+                }
+            },
+            fail: function () {
+                console.log("接口调用失败的回调函数");
+            },
+            complete: function () {
+                console.log("接口调用结束的回调函数（调用成功、失败都会执行）");
+            }
+        })
+    },
     copyLinkFunc: function(e) {
         // 在页面中定义激励视频广告
         let videoAd = null
@@ -156,11 +182,27 @@ Page({
             videoAd.onLoad(() => {})
             videoAd.onError((err) => {
                 console.log("have error")
+                // wx.showToast({
+                //     title: '激励视频展示失败',
+                //     duration:4000,
+                //     icon:'none'
+                //   })
+
+
                 wx.showToast({
-                    title: '激励视频展示失败',
-                    duration:4000,
-                    icon:'none'
-                  })
+                    title: '复制成功',
+                })
+
+                wx.setClipboardData({
+                    data: this.data.copyLink, //复制的数据
+                    success: function (res) {
+                    wx.getClipboardData({
+                        success: function (res) {
+                            
+                        }
+                    })
+                    }
+                })
             })
             videoAd.onClose((res) => {
                 if (res && res.isEnded) {
@@ -204,23 +246,122 @@ Page({
 
 
     },
-    copyMusic: function(e) {
-        console.log(e)
-        wx.showToast({
-            title: '复制成功',
-          })
-      
-          // 下方为微信开发文档中的复制 API
-          wx.setClipboardData({
-            data: this.data.musicUrl, //复制的数据
+    copyMusicBefore: function(e) {
+        const that = this
+        wx.showModal({
+            title: "温馨提示", // 提示的标题
+            content: "只需观看一小段广告，即可复制链接", // 提示的内容
+            showCancel: true, // 是否显示取消按钮，默认true
+            cancelText: "取消", // 取消按钮的文字，最多4个字符
+            cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
+            confirmText: "知道了", // 确认按钮的文字，最多4个字符
+            confirmColor: "#576B95", // 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串
             success: function (res) {
-              wx.getClipboardData({
-                success: function (res) {
-                    
+                console.log("接口调用成功的回调函数");
+                if (res.confirm) {
+                    that.copyMusic(e)
+                } else if (res.cancel) {
+                    return
                 }
-              })
+            },
+            fail: function (res) {
+                console.log("接口调用失败的回调函数");
+                console.log(res)
+            },
+            complete: function () {
+                console.log("接口调用结束的回调函数（调用成功、失败都会执行）");
             }
-          })
+        })
+    },
+    
+    copyMusic: function(e) {
+        let videoAd = null
+        
+        // 在页面onLoad回调事件中创建激励视频广告实例
+        if (wx.createRewardedVideoAd) {
+            videoAd = wx.createRewardedVideoAd({
+                adUnitId: 'adunit-e79ef43a712de5cd'
+            })
+            videoAd.onLoad(() => {})
+            videoAd.onError((err) => {
+                console.log("have error")
+                // wx.showToast({
+                //     title: '激励视频展示失败',
+                //     duration:4000,
+                //     icon:'none'
+                //   })
+
+
+                wx.showToast({
+                    title: '复制成功',
+                })
+
+                wx.setClipboardData({
+                    data: this.data.musicUrl, //复制的数据
+                    success: function (res) {
+                      wx.getClipboardData({
+                        success: function (res) {
+                            
+                        }
+                      })
+                    }
+                  })
+            })
+            videoAd.onClose((res) => {
+                if (res && res.isEnded) {
+                    // 正常播放结束,可以下发游戏奖励
+                    // 原始复制的代码
+                    console.log("激励了一次")
+                    wx.showToast({
+                        title: '复制成功',
+                    })
+                    wx.setClipboardData({
+                        data: this.data.musicUrl, //复制的数据
+                        success: function (res) {
+                          wx.getClipboardData({
+                            success: function (res) {
+                                
+                            }
+                          })
+                        }
+                      })
+                } else {
+                    // 播放中途退出,不下发游戏奖励
+                    console.log("播放中途退出,不下发游戏奖励")
+                    // videoAd.show()
+                }
+            })
+        }
+
+        // 用户触发广告后，显示激励视频广告
+        if (videoAd) {
+            videoAd.show().catch(() => {
+                // 失败重试
+                videoAd.load()
+                .then(() => videoAd.show())
+                .catch(err => {
+                    console.log('激励视频 广告显示失败')
+                })
+            })
+        }
+
+
+
+        // wx.showToast({
+        //     title: '复制成功',
+        //   })
+      
+        //   // 下方为微信开发文档中的复制 API
+        //   wx.setClipboardData({
+        //     data: this.data.musicUrl, //复制的数据
+        //     success: function (res) {
+        //       wx.getClipboardData({
+        //         success: function (res) {
+                    
+        //         }
+        //       })
+        //     }
+        //   })
 
     },
     downloadMusic: function(e) {

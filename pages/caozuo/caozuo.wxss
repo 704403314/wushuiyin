@@ -43,3 +43,9 @@
     color: rgb(27, 133, 6);
     line-height: 2;
   }
+
+  .divider{
+    height: 1px;
+    background-color: #ddd;
+    width: 100%;
+  }
