@@ -13,7 +13,9 @@ Page({
         totalPage:0,
         progress:0,
         progressHidden:true,
-        musicUrl: ""
+        musicUrl: "",
+        onCloseCount: 0,
+        onMP4CloseCount: 0
     },
     // tap() {
     //   console.log('tap')
@@ -144,31 +146,65 @@ Page({
             }
         })
     },
-    copyLinkFuncBefore: function(e) {
-        const that = this
-        wx.showModal({
-            title: "温馨提示", // 提示的标题
-            content: "只需观看一小段广告，即可复制链接", // 提示的内容
-            showCancel: true, // 是否显示取消按钮，默认true
-            cancelText: "取消", // 取消按钮的文字，最多4个字符
-            cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
-            confirmText: "知道了", // 确认按钮的文字，最多4个字符
-            confirmColor: "#576B95", // 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串
-            success: function (res) {
-                console.log("接口调用成功的回调函数");
-                if (res.confirm) {
-                    that.copyLinkFunc(e)
-                } else if (res.cancel) {
-                    return
-                }
-            },
-            fail: function () {
-                console.log("接口调用失败的回调函数");
-            },
-            complete: function () {
-                console.log("接口调用结束的回调函数（调用成功、失败都会执行）");
-            }
+    copyCommon: function(url) {
+        wx.showToast({
+            title: '复制成功',
         })
+
+        wx.setClipboardData({
+            data: url, //复制的数据
+            success: function (res) {
+              wx.getClipboardData({
+                success: function (res) {
+                    
+                }
+              })
+            }
+          })
+    },
+    copyLinkFuncBefore: function(e) {
+        let viewedAd = wx.getStorageSync('viewedAd');
+
+        // 如果今天还没有观看过广告
+        if (!viewedAd) {
+          // 调用观看广告的方法
+          const that = this
+          wx.showModal({
+              title: "温馨提示", // 提示的标题
+              content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
+              showCancel: true, // 是否显示取消按钮，默认true
+              cancelText: "取消", // 取消按钮的文字，最多4个字符
+              cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
+              confirmText: "知道了", // 确认按钮的文字，最多4个字符
+              confirmColor: "#576B95", // 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串
+              success: function (res) {
+                  console.log("接口调用成功的回调函数");
+                  if (res.confirm) {
+                      that.copyLinkFunc(e)
+                  } else if (res.cancel) {
+                      return
+                  }
+              },
+              fail: function () {
+                  console.log("接口调用失败的回调函数");
+              },
+              complete: function () {
+                  console.log("接口调用结束的回调函数（调用成功、失败都会执行）");
+              }
+          })
+          
+        } else {
+          // 提示用户今天已经观看过广告，无法再次观看
+            
+            console.log("今天已经观看过广告了")
+           
+            console.log(wx.getStorageSync('viewedAd'))
+            console.log(wx.getStorageSync('viewedAdDate'))
+            this.copyCommon(this.data.copyLink)  
+        }
+
+
+        
     },
     copyLinkFunc: function(e) {
         // 在页面中定义激励视频广告
@@ -181,48 +217,15 @@ Page({
             })
             videoAd.onLoad(() => {})
             videoAd.onError((err) => {
-                console.log("have error")
-                // wx.showToast({
-                //     title: '激励视频展示失败',
-                //     duration:4000,
-                //     icon:'none'
-                //   })
-
-
-                wx.showToast({
-                    title: '复制成功',
-                })
-
-                wx.setClipboardData({
-                    data: this.data.copyLink, //复制的数据
-                    success: function (res) {
-                    wx.getClipboardData({
-                        success: function (res) {
-                            
-                        }
-                    })
-                    }
-                })
+                this.copyCommon(this.data.copyLink)
             })
             videoAd.onClose((res) => {
                 if (res && res.isEnded) {
                     // 正常播放结束,可以下发游戏奖励
                     // 原始复制的代码
                     console.log("激励了一次")
-                    wx.showToast({
-                        title: '复制成功',
-                    })
-                    // 下方为微信开发文档中的复制 API
-                    wx.setClipboardData({
-                        data: this.data.copyLink, //复制的数据
-                        success: function (res) {
-                        wx.getClipboardData({
-                            success: function (res) {
-                                
-                            }
-                        })
-                        }
-                    })
+                    wx.setStorageSync('viewedAd', true);
+                    this.copyCommon(this.data.copyLink)
                 } else {
                     // 播放中途退出,不下发游戏奖励
                     console.log("播放中途退出,不下发游戏奖励")
@@ -247,85 +250,74 @@ Page({
 
     },
     copyMusicBefore: function(e) {
-        const that = this
-        wx.showModal({
-            title: "温馨提示", // 提示的标题
-            content: "只需观看一小段广告，即可复制链接", // 提示的内容
-            showCancel: true, // 是否显示取消按钮，默认true
-            cancelText: "取消", // 取消按钮的文字，最多4个字符
-            cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
-            confirmText: "知道了", // 确认按钮的文字，最多4个字符
-            confirmColor: "#576B95", // 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串
-            success: function (res) {
-                console.log("接口调用成功的回调函数");
-                if (res.confirm) {
-                    that.copyMusic(e)
-                } else if (res.cancel) {
-                    return
-                }
-            },
-            fail: function (res) {
-                console.log("接口调用失败的回调函数");
-                console.log(res)
-            },
-            complete: function () {
-                console.log("接口调用结束的回调函数（调用成功、失败都会执行）");
-            }
-        })
+        let viewedAd = wx.getStorageSync('viewedAd');
+
+        // 如果今天还没有观看过广告
+        if (!viewedAd) {
+          // 调用观看广告的方法
+          const that = this
+          wx.showModal({
+              title: "温馨提示", // 提示的标题
+              content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
+              showCancel: true, // 是否显示取消按钮，默认true
+              cancelText: "取消", // 取消按钮的文字，最多4个字符
+              cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
+              confirmText: "知道了", // 确认按钮的文字，最多4个字符
+              confirmColor: "#576B95", // 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串
+              success: function (res) {
+                  console.log("接口调用成功的回调函数");
+                  if (res.confirm) {
+                      that.copyMusic(e)
+                  } else if (res.cancel) {
+                      return
+                  }
+              },
+              fail: function (res) {
+                  console.log("接口调用失败的回调函数");
+                  console.log(res)
+              },
+              complete: function () {
+                  console.log("接口调用结束的回调函数（调用成功、失败都会执行）");
+              }
+          })
+          
+        } else {
+          // 提示用户今天已经观看过广告，无法再次观看
+            
+            console.log("今天已经观看过广告了")
+           
+            console.log(wx.getStorageSync('viewedAd'))
+            console.log(wx.getStorageSync('viewedAdDate'))
+            this.copyCommon(this.data.musicUrl)  
+        }
+
+        
     },
-    
     copyMusic: function(e) {
         let videoAd = null
-        
+        // console.log(123123)
         // 在页面onLoad回调事件中创建激励视频广告实例
         if (wx.createRewardedVideoAd) {
+            // console.log(12312312)
             videoAd = wx.createRewardedVideoAd({
                 adUnitId: 'adunit-e79ef43a712de5cd'
             })
             videoAd.onLoad(() => {})
             videoAd.onError((err) => {
-                console.log("have error")
-                // wx.showToast({
-                //     title: '激励视频展示失败',
-                //     duration:4000,
-                //     icon:'none'
-                //   })
-
-
-                wx.showToast({
-                    title: '复制成功',
-                })
-
-                wx.setClipboardData({
-                    data: this.data.musicUrl, //复制的数据
-                    success: function (res) {
-                      wx.getClipboardData({
-                        success: function (res) {
-                            
-                        }
-                      })
-                    }
-                  })
+                this.copyCommon(this.data.musicUrl)  
             })
             videoAd.onClose((res) => {
+                // console.log(123123123)
                 if (res && res.isEnded) {
+                    // console.log(3331)
                     // 正常播放结束,可以下发游戏奖励
                     // 原始复制的代码
                     console.log("激励了一次")
-                    wx.showToast({
-                        title: '复制成功',
-                    })
-                    wx.setClipboardData({
-                        data: this.data.musicUrl, //复制的数据
-                        success: function (res) {
-                          wx.getClipboardData({
-                            success: function (res) {
-                                
-                            }
-                          })
-                        }
-                      })
+                    // 观看广告之后，将观看广告的标记设置为true
+                    wx.setStorageSync('viewedAd', true);
+                    this.copyCommon(this.data.musicUrl)  
                 } else {
+                    // console.log(3332)
                     // 播放中途退出,不下发游戏奖励
                     console.log("播放中途退出,不下发游戏奖励")
                     // videoAd.show()
@@ -341,148 +333,109 @@ Page({
                 .then(() => videoAd.show())
                 .catch(err => {
                     console.log('激励视频 广告显示失败')
+                    console.log(err)
                 })
             })
         }
 
-
-
-        // wx.showToast({
-        //     title: '复制成功',
-        //   })
-      
-        //   // 下方为微信开发文档中的复制 API
-        //   wx.setClipboardData({
-        //     data: this.data.musicUrl, //复制的数据
-        //     success: function (res) {
-        //       wx.getClipboardData({
-        //         success: function (res) {
-                    
-        //         }
-        //       })
-        //     }
-        //   })
-
     },
-    downloadMusic: function(e) {
-        console.log("downloadVideoFunc start")
-        // console.log("this.access:", this.access())
-        this.setData({
-            hidden: false,
-            progressHidden: false
-        })
-        const that = this 
-        wx.downloadFile({
-            url: that.data.musicUrl, // 音频资源地
-            // filePath: wx.env.USER_DATA_PATH + '/videoCache/' +this.data.copyLink,
-            success: res => {
-              console.log('downloadFile成功回调res:', res)
-              let FilePath = res.tempFilePath; // 下载到本地获取临时路径
-              let fileManager = wx.getFileSystemManager();
-              
-              wx.saveFile({
-                tempFilePath: FilePath,
-                success: function (result) {
-                    that.setData({
-                        hidden: true,
-                        progressHidden: false
-                    })
-                    wx.getSavedFileList({
-                        success: function (res) {
-                          console.log('已保存的文件列表', res.fileList, res.fileList.length, res.fileList[0].filePath)
-                          var saveMusicPath = res.fileList[res.fileList.length-1].filePath
-                          console.log('音频保存地址:', saveMusicPath)
-                          wx.showToast({
-                            title: '文件保存地址:' + saveMusicPath,
-                            duration: 4000,
-                            icon: 'success'
-                          })
-                        },
-                        fail: function (err) {
-                          console.log('获取已保存的文件列表失败', err)
-                        }
-                      })
-                    
-                },
-                fail: function (err) {
-                    that.setData({
-                        hidden: true,
-                        progressHidden: false
-                    })
-                  wx.showToast({
-                    title: '提取保存失败了',
-                    duration:4000,
-                    icon:'none'
-                  })
-                }
-              })
-         
-            },
-            fail(e) {
-              console.log('失败e', e)
-              that.setData({
-                    hidden: true,
-                    progressHidden: false
-                })
-              wx.showToast({
-                title: '音频保存失败了, 请重试或点击复制音频链接在浏览器中打开',
-                duration:4500,
-                icon:'none'
-              })
-            },
-            complete() {
-              // wx.hideLoading();
-            }
-      }).onProgressUpdate((res) => {
-        // 下载进度更新时的回调函数
-        this.setData({
-          progress: res.progress
-        });
-      });
-
-    },
-    downloadVideoFunc: function(e) {
-        // 在页面中定义激励视频广告
-        // let videoAd = null
+    downloadVideoFuncAd: function(e) {
+        let videoAd = null
         
-        // // 在页面onLoad回调事件中创建激励视频广告实例
-        // if (wx.createRewardedVideoAd) {
-        //     videoAd = wx.createRewardedVideoAd({
-        //         adUnitId: 'adunit-052ed3c0d5e20c89'
-        //     })
-        //     videoAd.onLoad(() => {})
-        //     videoAd.onError((err) => {
-        //         console.log("have error")
-        //         wx.showToast({
-        //             title: '激励视频展示失败',
-        //             duration:4000,
-        //             icon:'none'
-        //           })
-        //     })
-        //     videoAd.onClose((res) => {
-        //         if (res && res.isEnded) {
+        // 在页面onLoad回调事件中创建激励视频广告实例
+        if (wx.createRewardedVideoAd) {
+            videoAd = wx.createRewardedVideoAd({
+                adUnitId: 'adunit-40a5841cb54a089f'
+            })
                     
 
+            videoAd.onLoad(() => {})
+            videoAd.onError((err) => {
+                this.downloadVideoFunc(e)  
+            })
+            videoAd.onClose((res) => {
+                
+                if (res && res.isEnded) {
+                    // 正常播放结束,可以下发游戏奖励
+                    // 原始复制的代码
+                    console.log("激励了一次")
+                    // 观看广告之后，将观看广告的标记设置为true
+                    wx.setStorageSync('viewedAd', true);
+                    if (this.data.onCloseCount == 0) {
+                        this.setData({
+                            onCloseCount: this.data.onCloseCount + 1
+                        })
+                        this.downloadVideoFunc(e)
+                    }
+                    // this.downloadVideoFunc(e)
+                } else {
+                    // 播放中途退出,不下发游戏奖励
+                    console.log("播放中途退出,不下发游戏奖励")
+                    // videoAd.show()
+                }
+                
+            })
+        }
 
-        //         } else {
-        //             // 播放中途退出,不下发游戏奖励
-        //             console.log("播放中途退出,不下发游戏奖励")
-        //         }
-        //     })
-        // }
+        // 用户触发广告后，显示激励视频广告
+        if (videoAd) {
+            videoAd.show().catch(() => {
+                // 失败重试
+                videoAd.load()
+                .then(() => videoAd.show())
+                .catch(err => {
+                    console.log('激励视频 广告显示失败')
+                    console.log(err)
+                })
+            })
+        }
 
-        // // 用户触发广告后，显示激励视频广告
-        // if (videoAd) {
-        //     videoAd.show().catch(() => {
-        //         // 失败重试
-        //         videoAd.load()
-        //         .then(() => videoAd.show())
-        //         .catch(err => {
-        //             console.log('激励视频 广告显示失败')
-        //         })
-        //     })
-        // }
+    },
 
+    downloadVideoFuncBefore: function(e) {
+        let viewedAd = wx.getStorageSync('viewedAd');
+
+        // 如果今天还没有观看过广告
+        if (!viewedAd) {
+          // 调用观看广告的方法
+          const that = this
+          wx.showModal({
+              title: "温馨提示", // 提示的标题
+              content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
+              showCancel: true, // 是否显示取消按钮，默认true
+              cancelText: "取消", // 取消按钮的文字，最多4个字符
+              cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
+              confirmText: "知道了", // 确认按钮的文字，最多4个字符
+              confirmColor: "#576B95", // 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串
+              success: function (res) {
+                  console.log("接口调用成功的回调函数");
+                  if (res.confirm) {
+                      that.downloadVideoFuncAd(e)
+                  } else if (res.cancel) {
+                      return
+                  }
+              },
+              fail: function (res) {
+                  console.log("接口调用失败的回调函数");
+                  console.log(res)
+              },
+              complete: function () {
+                  console.log("接口调用结束的回调函数（调用成功、失败都会执行）");
+              }
+          })
+          
+        } else {
+          // 提示用户今天已经观看过广告，无法再次观看
+            
+            console.log("今天已经观看过广告了")
+           
+            console.log(wx.getStorageSync('viewedAd'))
+            console.log(wx.getStorageSync('viewedAdDate'))
+            this.downloadVideoFunc(e)  
+        }
+    },
+
+    downloadVideoFunc: function(e) {
         this.setData({
             hidden: false,
             progressHidden: false
@@ -592,6 +545,103 @@ Page({
 
             
 
+    },
+
+    downloadMP4FuncAd: function(e) {
+        let videoAd = null
+        
+        // 在页面onLoad回调事件中创建激励视频广告实例
+        if (wx.createRewardedVideoAd) {
+            videoAd = wx.createRewardedVideoAd({
+                adUnitId: 'adunit-c06784d3e3dc5629'
+            })
+                    
+
+            videoAd.onLoad(() => {})
+            videoAd.onError((err) => {
+                this.downloadMP4Func(e)  
+            })
+            videoAd.onClose((rr) => {
+                
+                if (rr && rr.isEnded) {
+                    // 正常播放结束,可以下发游戏奖励
+                    // 原始复制的代码
+                    console.log("激励了一次")
+                    // 观看广告之后，将观看广告的标记设置为true
+                    wx.setStorageSync('viewedAd', true);
+                    console.log("this.data.onMP4CloseCount:", this.data.onMP4CloseCount)
+                    if (this.data.onMP4CloseCount == 0) {
+                        this.setData({
+                            onMP4CloseCount: this.data.onMP4CloseCount + 1
+                        })
+                        console.log("this.downloadMP4Func(e) start")
+                        this.downloadMP4Func(e)
+                    }
+                } else {
+                    // 播放中途退出,不下发游戏奖励
+                    console.log("播放中途退出,不下发游戏奖励")
+                    // videoAd.show()
+                }
+                
+            })
+        }
+
+        // 用户触发广告后，显示激励视频广告
+        if (videoAd) {
+            videoAd.show().catch(() => {
+                // 失败重试
+                videoAd.load()
+                .then(() => videoAd.show())
+                .catch(err => {
+                    console.log('激励视频 广告显示失败')
+                    console.log(err)
+                })
+            })
+        }
+
+    },
+
+    downloadMP4FuncBefore: function(e) {
+        let viewedAd = wx.getStorageSync('viewedAd');
+
+        // 如果今天还没有观看过广告
+        if (!viewedAd) {
+          // 调用观看广告的方法
+          const that = this
+          wx.showModal({
+              title: "温馨提示", // 提示的标题
+              content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
+              showCancel: true, // 是否显示取消按钮，默认true
+              cancelText: "取消", // 取消按钮的文字，最多4个字符
+              cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
+              confirmText: "知道了", // 确认按钮的文字，最多4个字符
+              confirmColor: "#576B95", // 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串
+              success: function (res) {
+                  console.log("接口调用成功的回调函数");
+                  if (res.confirm) {
+                      that.downloadMP4FuncAd(e)
+                  } else if (res.cancel) {
+                      return
+                  }
+              },
+              fail: function (res) {
+                  console.log("接口调用失败的回调函数");
+                  console.log(res)
+              },
+              complete: function () {
+                  console.log("接口调用结束的回调函数（调用成功、失败都会执行）");
+              }
+          })
+          
+        } else {
+          // 提示用户今天已经观看过广告，无法再次观看
+            
+            console.log("今天已经观看过广告了")
+           
+            console.log(wx.getStorageSync('viewedAd'))
+            console.log(wx.getStorageSync('viewedAdDate'))
+            this.downloadMP4Func(e)  
+        }
     },
 
     downloadMP4Func: function () {
@@ -750,21 +800,38 @@ Page({
         })
         
     },
+    onShow: function () {
+        // wx.setStorageSync('viewedAd', false);
+        // wx.setStorageSync('viewedAdDate', "date");
+        // 获取当前日期
+        let date = new Date().toLocaleDateString();
+    
+        // 每次启动小程序时，检查是否已经观看过广告
+        let viewedAdDate = wx.getStorageSync('viewedAdDate');
+        
+        // 如果没有观看过广告，或者观看过广告的日期不是今天，则将观看广告的标记重新设置为false
+        console.log("viewedAdDate:", viewedAdDate)
+        if (!viewedAdDate || viewedAdDate !== date) {
+           console.log("123")
+          wx.setStorageSync('viewedAd', false);
+          wx.setStorageSync('viewedAdDate', date);
+        }
+        console.log("wx.getStorageSync('viewedAdDate')", wx.getStorageSync('viewedAdDate'))
+        console.log("wx.getStorageSync('viewedAd')", wx.getStorageSync('viewedAd'))
+    },
+    onHide: function () {
+        this.setData({
+          onCloseCount: 0,
+          onMP4CloseCount: 0
+        })
+    },
+    onUnload: function () {
+        this.setData({
+            onCloseCount: 0,
+            onMP4CloseCount: 0
+        })
+    },
     onLoad: function(options) {
-        // const that = this
-        // // progressNum = 0
-        // var timerpro = setInterval(function(){
-        //     // if (typeof(progressNum) == undefined) {
-        //     //     var progressNum = 0
-        //     // }
-        //     // progressNum++
-        //     if (that.pro>=100) {
-        //         clearInterval(timerpro)
-        //     }
-        //     var progressNum = that.pro + 1
-        //     that.setData({
-        //         pro:progressNum
-        //     })
-        // },300)
+        
     }
   })
