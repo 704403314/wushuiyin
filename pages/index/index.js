@@ -15,7 +15,9 @@ Page({
         progressHidden:true,
         musicUrl: "",
         onCloseCount: 0,
-        onMP4CloseCount: 0
+        onMP4CloseCount: 0,
+        onCopyVideoCloseCount: 0,
+        onCopyMusicCloseCount: 0
     },
     // tap() {
     //   console.log('tap')
@@ -164,14 +166,13 @@ Page({
     },
     copyLinkFuncBefore: function(e) {
         let viewedAd = wx.getStorageSync('viewedAd');
-
         // 如果今天还没有观看过广告
         if (!viewedAd) {
           // 调用观看广告的方法
           const that = this
           wx.showModal({
               title: "温馨提示", // 提示的标题
-              content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
+              content: "每天只需观看一次广告，即可解锁复制链接功能", // 提示的内容
               showCancel: true, // 是否显示取消按钮，默认true
               cancelText: "取消", // 取消按钮的文字，最多4个字符
               cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -198,8 +199,7 @@ Page({
             
             console.log("今天已经观看过广告了")
            
-            console.log(wx.getStorageSync('viewedAd'))
-            console.log(wx.getStorageSync('viewedAdDate'))
+
             this.copyCommon(this.data.copyLink)  
         }
 
@@ -219,13 +219,19 @@ Page({
             videoAd.onError((err) => {
                 this.copyCommon(this.data.copyLink)
             })
-            videoAd.onClose((res) => {
-                if (res && res.isEnded) {
+            videoAd.onClose((rrrr) => {
+                if (rrrr && rrrr.isEnded) {
                     // 正常播放结束,可以下发游戏奖励
                     // 原始复制的代码
                     console.log("激励了一次")
                     wx.setStorageSync('viewedAd', true);
-                    this.copyCommon(this.data.copyLink)
+                    if (this.data.onCopyVideoCloseCount == 0) {
+                        this.setData({
+                            onCopyVideoCloseCount: this.data.onCopyVideoCloseCount + 1
+                        })
+                        this.copyCommon(this.data.copyLink)
+                    }
+                    
                 } else {
                     // 播放中途退出,不下发游戏奖励
                     console.log("播放中途退出,不下发游戏奖励")
@@ -251,14 +257,14 @@ Page({
     },
     copyMusicBefore: function(e) {
         let viewedAd = wx.getStorageSync('viewedAd');
-
         // 如果今天还没有观看过广告
         if (!viewedAd) {
           // 调用观看广告的方法
           const that = this
           wx.showModal({
               title: "温馨提示", // 提示的标题
-              content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
+            //   content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
+              content: "每天只需观看一次广告，即可解锁复制链接功能", // 提示的内容
               showCancel: true, // 是否显示取消按钮，默认true
               cancelText: "取消", // 取消按钮的文字，最多4个字符
               cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -286,8 +292,7 @@ Page({
             
             console.log("今天已经观看过广告了")
            
-            console.log(wx.getStorageSync('viewedAd'))
-            console.log(wx.getStorageSync('viewedAdDate'))
+
             this.copyCommon(this.data.musicUrl)  
         }
 
@@ -306,16 +311,20 @@ Page({
             videoAd.onError((err) => {
                 this.copyCommon(this.data.musicUrl)  
             })
-            videoAd.onClose((res) => {
+            videoAd.onClose((r) => {
                 // console.log(123123123)
-                if (res && res.isEnded) {
-                    // console.log(3331)
-                    // 正常播放结束,可以下发游戏奖励
-                    // 原始复制的代码
+                if (r && r.isEnded) {
+                    
                     console.log("激励了一次")
                     // 观看广告之后，将观看广告的标记设置为true
                     wx.setStorageSync('viewedAd', true);
-                    this.copyCommon(this.data.musicUrl)  
+                    if (this.data.onCopyMusicCloseCount == 0) {
+                        this.setData({
+                            onCopyMusicCloseCount: this.data.onCopyMusicCloseCount + 1
+                        })
+                        this.copyCommon(this.data.musicUrl)
+                    }
+                    
                 } else {
                     // console.log(3332)
                     // 播放中途退出,不下发游戏奖励
@@ -353,14 +362,14 @@ Page({
             videoAd.onError((err) => {
                 this.downloadVideoFunc(e)  
             })
-            videoAd.onClose((res) => {
+            videoAd.onClose((rrr) => {
                 
-                if (res && res.isEnded) {
+                if (rrr && rrr.isEnded) {
                     // 正常播放结束,可以下发游戏奖励
                     // 原始复制的代码
                     console.log("激励了一次")
                     // 观看广告之后，将观看广告的标记设置为true
-                    wx.setStorageSync('viewedAd', true);
+                    wx.setStorageSync('viewedDownloadVideoAd', true);
                     if (this.data.onCloseCount == 0) {
                         this.setData({
                             onCloseCount: this.data.onCloseCount + 1
@@ -393,15 +402,15 @@ Page({
     },
 
     downloadVideoFuncBefore: function(e) {
-        let viewedAd = wx.getStorageSync('viewedAd');
-
+        let viewedAd = wx.getStorageSync('viewedDownloadVideoAd');
         // 如果今天还没有观看过广告
         if (!viewedAd) {
           // 调用观看广告的方法
           const that = this
           wx.showModal({
               title: "温馨提示", // 提示的标题
-              content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
+            //   content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
+              content: "每天只需观看一次广告，即可解锁保存视频功能",
               showCancel: true, // 是否显示取消按钮，默认true
               cancelText: "取消", // 取消按钮的文字，最多4个字符
               cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -429,8 +438,7 @@ Page({
             
             console.log("今天已经观看过广告了")
            
-            console.log(wx.getStorageSync('viewedAd'))
-            console.log(wx.getStorageSync('viewedAdDate'))
+
             this.downloadVideoFunc(e)  
         }
     },
@@ -568,13 +576,13 @@ Page({
                     // 原始复制的代码
                     console.log("激励了一次")
                     // 观看广告之后，将观看广告的标记设置为true
-                    wx.setStorageSync('viewedAd', true);
-                    console.log("this.data.onMP4CloseCount:", this.data.onMP4CloseCount)
+                    wx.setStorageSync('viewedDownloadMusicAd', true);
+                    console.log("---------viewedDownloadMusicAd true:")
+                   
                     if (this.data.onMP4CloseCount == 0) {
                         this.setData({
                             onMP4CloseCount: this.data.onMP4CloseCount + 1
                         })
-                        console.log("this.downloadMP4Func(e) start")
                         this.downloadMP4Func(e)
                     }
                 } else {
@@ -602,15 +610,16 @@ Page({
     },
 
     downloadMP4FuncBefore: function(e) {
-        let viewedAd = wx.getStorageSync('viewedAd');
-
+        let viewedAd = wx.getStorageSync('viewedDownloadMusicAd');
+        console.log("downloadMP4FuncBefore viewedAd", viewedAd)
         // 如果今天还没有观看过广告
         if (!viewedAd) {
           // 调用观看广告的方法
           const that = this
           wx.showModal({
               title: "温馨提示", // 提示的标题
-              content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
+            //   content: "每天只需观看一次广告，即可解锁全部功能",
+              content: "每天只需观看一次广告，即可解锁保存音频功能",
               showCancel: true, // 是否显示取消按钮，默认true
               cancelText: "取消", // 取消按钮的文字，最多4个字符
               cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -803,6 +812,13 @@ Page({
     onShow: function () {
         // wx.setStorageSync('viewedAd', false);
         // wx.setStorageSync('viewedAdDate', "date");
+        // 视频控制
+        // wx.setStorageSync('viewedDownloadMusicAd', false);
+        // wx.setStorageSync('viewedAdDownloadMusicDate', "date");
+        // 音频控制
+        // wx.setStorageSync('viewedDownloadVideoAd', false);
+        // wx.setStorageSync('viewedAdDownloadVideoDate', "date");
+
         // 获取当前日期
         let date = new Date().toLocaleDateString();
     
@@ -816,19 +832,46 @@ Page({
           wx.setStorageSync('viewedAd', false);
           wx.setStorageSync('viewedAdDate', date);
         }
+        // 视频下载
+        let viewedAdDownloadVideoDate = wx.getStorageSync('viewedAdDownloadVideoDate');
+        
+        console.log("viewedAdDownloadVideoDate:", viewedAdDownloadVideoDate)
+        if (!viewedAdDownloadVideoDate || viewedAdDownloadVideoDate !== date) {
+           console.log("123")
+          wx.setStorageSync('viewedDownloadVideoAd', false);
+          wx.setStorageSync('viewedAdDownloadVideoDate', date);
+        }
+        // 音频下载
+        let viewedAdDownloadMusicDate = wx.getStorageSync('viewedAdDownloadMusicDate');
+        
+        console.log("viewedAdDownloadMusicDate:", viewedAdDownloadMusicDate)
+        if (!viewedAdDownloadMusicDate || viewedAdDownloadMusicDate !== date) {
+           console.log("123")
+          wx.setStorageSync('viewedDownloadMusicAd', false);
+          wx.setStorageSync('viewedAdDownloadMusicDate', date);
+        }
+
+
         console.log("wx.getStorageSync('viewedAdDate')", wx.getStorageSync('viewedAdDate'))
         console.log("wx.getStorageSync('viewedAd')", wx.getStorageSync('viewedAd'))
+        console.log("wx.getStorageSync('viewedDownloadMusicAd')", wx.getStorageSync('viewedDownloadMusicAd'))
+        console.log("wx.getStorageSync('viewedDownloadVideoAd')", wx.getStorageSync('viewedDownloadVideoAd'))
+
     },
     onHide: function () {
         this.setData({
           onCloseCount: 0,
-          onMP4CloseCount: 0
+          onMP4CloseCount: 0,
+          onCopyVideoCloseCount: 0,
+          onCopyMusicCloseCount: 0
         })
     },
     onUnload: function () {
         this.setData({
             onCloseCount: 0,
-            onMP4CloseCount: 0
+            onMP4CloseCount: 0,
+            onCopyVideoCloseCount: 0,
+            onCopyMusicCloseCount: 0
         })
     },
     onLoad: function(options) {
