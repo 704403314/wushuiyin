@@ -223,9 +223,10 @@ Page({
                 if (rrrr && rrrr.isEnded) {
                     // 正常播放结束,可以下发游戏奖励
                     // 原始复制的代码
-                    console.log("激励了一次")
-                    wx.setStorageSync('viewedAd', true);
+                    
                     if (this.data.onCopyVideoCloseCount == 0) {
+                        console.log("激励了一次")
+                        wx.setStorageSync('viewedAd', true);
                         this.setData({
                             onCopyVideoCloseCount: this.data.onCopyVideoCloseCount + 1
                         })
@@ -257,6 +258,7 @@ Page({
     },
     copyMusicBefore: function(e) {
         let viewedAd = wx.getStorageSync('viewedAd');
+        console.log("复制音频看了广告：", viewedAd)
         // 如果今天还没有观看过广告
         if (!viewedAd) {
           // 调用观看广告的方法
@@ -307,6 +309,16 @@ Page({
             videoAd = wx.createRewardedVideoAd({
                 adUnitId: 'adunit-e79ef43a712de5cd'
             })
+            try {
+                if (videoAd.closeHandler) {
+                    console.log("videoAd.offClose开始卸载");
+                    videoAd.offClose(videoAd.closeHandler);
+                    console.log("videoAd.offClose卸载成功");
+                }
+            } catch (e) {
+                console.log("videoAd.offClose 卸载失败");
+                console.error(e);
+            }
             videoAd.onLoad(() => {})
             videoAd.onError((err) => {
                 this.copyCommon(this.data.musicUrl)  
@@ -315,10 +327,10 @@ Page({
                 // console.log(123123123)
                 if (r && r.isEnded) {
                     
-                    console.log("激励了一次")
-                    // 观看广告之后，将观看广告的标记设置为true
-                    wx.setStorageSync('viewedAd', true);
+                    
                     if (this.data.onCopyMusicCloseCount == 0) {
+                        console.log("激励了一次")
+                        wx.setStorageSync('viewedAd', true);
                         this.setData({
                             onCopyMusicCloseCount: this.data.onCopyMusicCloseCount + 1
                         })
@@ -365,12 +377,10 @@ Page({
             videoAd.onClose((rrr) => {
                 
                 if (rrr && rrr.isEnded) {
-                    // 正常播放结束,可以下发游戏奖励
-                    // 原始复制的代码
-                    console.log("激励了一次")
-                    // 观看广告之后，将观看广告的标记设置为true
-                    wx.setStorageSync('viewedDownloadVideoAd', true);
+                    
                     if (this.data.onCloseCount == 0) {
+                        console.log("激励了一次")
+                        wx.setStorageSync('viewedDownloadVideoAd', true);
                         this.setData({
                             onCloseCount: this.data.onCloseCount + 1
                         })
@@ -564,6 +574,16 @@ Page({
                 adUnitId: 'adunit-c06784d3e3dc5629'
             })
                     
+            try {
+                if (videoAd.closeHandler) {
+                    console.log("videoAd.offClose开始卸载");
+                    videoAd.offClose(videoAd.closeHandler);
+                    console.log("videoAd.offClose卸载成功");
+                }
+            } catch (e) {
+                console.log("videoAd.offClose 卸载失败");
+                console.error(e);
+            }
 
             videoAd.onLoad(() => {})
             videoAd.onError((err) => {
@@ -572,14 +592,12 @@ Page({
             videoAd.onClose((rr) => {
                 
                 if (rr && rr.isEnded) {
-                    // 正常播放结束,可以下发游戏奖励
-                    // 原始复制的代码
-                    console.log("激励了一次")
-                    // 观看广告之后，将观看广告的标记设置为true
-                    wx.setStorageSync('viewedDownloadMusicAd', true);
-                    console.log("---------viewedDownloadMusicAd true:")
+                    
                    
                     if (this.data.onMP4CloseCount == 0) {
+                        console.log("激励了一次")
+                        wx.setStorageSync('viewedDownloadMusicAd', true);
+                        console.log("---------viewedDownloadMusicAd true:")
                         this.setData({
                             onMP4CloseCount: this.data.onMP4CloseCount + 1
                         })
@@ -611,7 +629,7 @@ Page({
 
     downloadMP4FuncBefore: function(e) {
         let viewedAd = wx.getStorageSync('viewedDownloadMusicAd');
-        console.log("downloadMP4FuncBefore viewedAd", viewedAd)
+        console.log("下载音频看了广告：", viewedAd)
         // 如果今天还没有观看过广告
         if (!viewedAd) {
           // 调用观看广告的方法
@@ -810,14 +828,12 @@ Page({
         
     },
     onShow: function () {
-        // wx.setStorageSync('viewedAd', false);
-        // wx.setStorageSync('viewedAdDate', "date");
-        // 视频控制
-        // wx.setStorageSync('viewedDownloadMusicAd', false);
-        // wx.setStorageSync('viewedAdDownloadMusicDate', "date");
-        // 音频控制
-        // wx.setStorageSync('viewedDownloadVideoAd', false);
-        // wx.setStorageSync('viewedAdDownloadVideoDate', "date");
+        wx.setStorageSync('viewedAd', false);
+        wx.setStorageSync('viewedAdDate', "date");
+        wx.setStorageSync('viewedDownloadMusicAd', false);
+        wx.setStorageSync('viewedAdDownloadMusicDate', "date");
+        wx.setStorageSync('viewedDownloadVideoAd', false);
+        wx.setStorageSync('viewedAdDownloadVideoDate', "date");
 
         // 获取当前日期
         let date = new Date().toLocaleDateString();
