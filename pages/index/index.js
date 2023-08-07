@@ -1,6 +1,8 @@
 // const mux = require('../../node_modules/mux.js/dist/mux');
 // const ffmpeg = require('../../node_modules/ffmpeg.js/ffmpeg-mp4.js');
 // const ffmpeg = require("../../utils/ffmpeg-mp4.js");
+const domain = "https://www.tankhui.cn"
+
 Page({
     data: {
         buttonShow: false,
@@ -17,7 +19,8 @@ Page({
         onCloseCount: 0,
         onMP4CloseCount: 0,
         onCopyVideoCloseCount: 0,
-        onCopyMusicCloseCount: 0
+        onCopyMusicCloseCount: 0,
+        seeAd: true
     },
     // tap() {
     //   console.log('tap')
@@ -104,10 +107,54 @@ Page({
         this.setData({
             hidden: false
         })
+        
+        // const openid = wx.getStorageSync('openid')
+        const openid = ""
+        console.log("code:",e)
+        
+        console.log("openid start:",wx.getStorageSync('openid'))
+
+        if (!openid) {
+            console.log("openid empty")
+            wx.login({
+                success: res => {
+                  console.log("登录成功 2")
+                  console.log(res)
+                  if (res.code) {
+                      let url = domain+"/etf/video/login"
+                      wx.request({
+                          url: url,
+                          data: {
+                              code:res.code
+                          },
+                          header: {
+                              'content-type': 'application/json' // 默认值
+                          },
+                          success (res) {
+                            console.log("login res:", res)
+                              if (res.data.code == 200) {
+                                  wx.setStorageSync('openid', res.data.data.openid)
+                              } else {
+                                  console.log(res)
+                                  
+                              }
+                              
+                          },
+                          fail(e) {
+                              console.log("调用接口失败", e)
+                              
+                          }
+                      })
+                  }
+                }
+              })
+        }
+        
         wx.request({
             url: 'https://www.tankhui.cn/video/share/url/parse', 
             data: {
-                url: v     
+                url: v,
+                openid: wx.getStorageSync('openid')  
             },
             header: {
                 'content-type': 'application/json' // 默认值
@@ -115,8 +162,17 @@ Page({
             success (res) {
                 console.log(res.data)
                 that.setData({
-                    hidden: true
+                    hidden: true,
+                    seeAd: true
                 })
+                // seeAd
+                if (res.data.msg == "New") {
+                    that.setData({
+                        seeAd: false
+                    })
+                }
+
+
                 if (res.data.code == 200) {
                     
                     console.log(res.data.data.video_url)
@@ -166,13 +222,16 @@ Page({
     },
     copyLinkFuncBefore: function(e) {
         let viewedAd = wx.getStorageSync('viewedAd');
+        let viewedMuAd = wx.getStorageSync('viewedDownloadMusicAd');
+        let viewedVideoMusicAd = wx.getStorageSync('viewedDownloadVideoAd');
+        let seeAd = this.data.seeAd
         // 如果今天还没有观看过广告
-        if (!viewedAd) {
+        if (!viewedAd && !viewedMuAd && !viewedVideoMusicAd && seeAd) {
           // 调用观看广告的方法
           const that = this
           wx.showModal({
               title: "温馨提示", // 提示的标题
-              content: "每天只需观看一次广告，即可解锁复制链接功能", // 提示的内容
+              content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
               showCancel: true, // 是否显示取消按钮，默认true
               cancelText: "取消", // 取消按钮的文字，最多4个字符
               cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -215,6 +274,16 @@ Page({
             videoAd = wx.createRewardedVideoAd({
                 adUnitId: 'adunit-052ed3c0d5e20c89'
             })
+            try {
+                if (videoAd.closeHandler) {
+                    console.log("videoAd.offClose开始卸载");
+                    videoAd.offClose(videoAd.closeHandler);
+                    console.log("videoAd.offClose卸载成功");
+                }
+            } catch (e) {
+                console.log("videoAd.offClose 卸载失败");
+                console.error(e);
+            }
             videoAd.onLoad(() => {})
             videoAd.onError((err) => {
                 this.copyCommon(this.data.copyLink)
@@ -258,15 +327,16 @@ Page({
     },
     copyMusicBefore: function(e) {
         let viewedAd = wx.getStorageSync('viewedAd');
-        console.log("复制音频看了广告：", viewedAd)
+        let viewedMuAd = wx.getStorageSync('viewedDownloadMusicAd');
+        let viewedVideoMusicAd = wx.getStorageSync('viewedDownloadVideoAd');
+        let seeAd = this.data.seeAd
         // 如果今天还没有观看过广告
-        if (!viewedAd) {
+        if (!viewedAd && !viewedMuAd && !viewedVideoMusicAd && seeAd) {
           // 调用观看广告的方法
           const that = this
           wx.showModal({
               title: "温馨提示", // 提示的标题
-            //   content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
-              content: "每天只需观看一次广告，即可解锁复制链接功能", // 提示的内容
+              content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
               showCancel: true, // 是否显示取消按钮，默认true
               cancelText: "取消", // 取消按钮的文字，最多4个字符
               cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -368,7 +438,16 @@ Page({
             videoAd = wx.createRewardedVideoAd({
                 adUnitId: 'adunit-40a5841cb54a089f'
             })
-                    
+            try {
+                if (videoAd.closeHandler) {
+                    console.log("videoAd.offClose开始卸载");
+                    videoAd.offClose(videoAd.closeHandler);
+                    console.log("videoAd.offClose卸载成功");
+                }
+            } catch (e) {
+                console.log("videoAd.offClose 卸载失败");
+                console.error(e);
+            }
 
             videoAd.onLoad(() => {})
             videoAd.onError((err) => {
@@ -413,14 +492,16 @@ Page({
 
     downloadVideoFuncBefore: function(e) {
         let viewedAd = wx.getStorageSync('viewedDownloadVideoAd');
+        let viewedVideoMusicAd = wx.getStorageSync('viewedDownloadMusicAd');
+        let viewedCopyAd = wx.getStorageSync('viewedAd');
+        let seeAd = this.data.seeAd
         // 如果今天还没有观看过广告
-        if (!viewedAd) {
+        if (!viewedAd && !viewedVideoMusicAd && !viewedCopyAd && seeAd) {
           // 调用观看广告的方法
           const that = this
           wx.showModal({
               title: "温馨提示", // 提示的标题
-            //   content: "每天只需观看一次广告，即可解锁全部功能", // 提示的内容
-              content: "每天只需观看一次广告，即可解锁保存视频功能",
+              content: "每天只需观看一次广告，即可解锁全部功能",
               showCancel: true, // 是否显示取消按钮，默认true
               cancelText: "取消", // 取消按钮的文字，最多4个字符
               cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -493,7 +574,7 @@ Page({
                     
                     wx.showToast({
                         title: '保存成功',
-                        duration: 3000,
+                        duration: 1500,
                         icon: 'success'
                     })
                     fileManager.unlink({ // 删除临时文件
@@ -597,7 +678,6 @@ Page({
                     if (this.data.onMP4CloseCount == 0) {
                         console.log("激励了一次")
                         wx.setStorageSync('viewedDownloadMusicAd', true);
-                        console.log("---------viewedDownloadMusicAd true:")
                         this.setData({
                             onMP4CloseCount: this.data.onMP4CloseCount + 1
                         })
@@ -629,15 +709,17 @@ Page({
 
     downloadMP4FuncBefore: function(e) {
         let viewedAd = wx.getStorageSync('viewedDownloadMusicAd');
-        console.log("下载音频看了广告：", viewedAd)
+        let viewedVideoMusicAd = wx.getStorageSync('viewedDownloadVideoAd');
+        let viewedVideoCopy = wx.getStorageSync('viewedAd');
+        let seeAd = this.data.seeAd
+        // console.log("下载音频看了广告：", viewedAd)
         // 如果今天还没有观看过广告
-        if (!viewedAd) {
+        if (!viewedAd && !viewedVideoMusicAd && !viewedVideoCopy && seeAd) {
           // 调用观看广告的方法
           const that = this
           wx.showModal({
               title: "温馨提示", // 提示的标题
-            //   content: "每天只需观看一次广告，即可解锁全部功能",
-              content: "每天只需观看一次广告，即可解锁保存音频功能",
+              content: "每天只需观看一次广告，即可解锁全部功能",
               showCancel: true, // 是否显示取消按钮，默认true
               cancelText: "取消", // 取消按钮的文字，最多4个字符
               cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -703,7 +785,7 @@ Page({
                       console.log('FilePath:', FilePath)
                       wx.showToast({
                         title: '保存成功',
-                        duration: 3000,
+                        duration: 1500,
                         icon: 'success'
                       })
                       fileManager.unlink({ // 删除临时文件
@@ -828,12 +910,12 @@ Page({
         
     },
     onShow: function () {
-        wx.setStorageSync('viewedAd', false);
-        wx.setStorageSync('viewedAdDate', "date");
-        wx.setStorageSync('viewedDownloadMusicAd', false);
-        wx.setStorageSync('viewedAdDownloadMusicDate', "date");
-        wx.setStorageSync('viewedDownloadVideoAd', false);
-        wx.setStorageSync('viewedAdDownloadVideoDate', "date");
+        // wx.setStorageSync('viewedAd', false);
+        // wx.setStorageSync('viewedAdDate', "date");
+        // wx.setStorageSync('viewedDownloadMusicAd', false);
+        // wx.setStorageSync('viewedAdDownloadMusicDate', "date");
+        // wx.setStorageSync('viewedDownloadVideoAd', false);
+        // wx.setStorageSync('viewedAdDownloadVideoDate', "date");
 
         // 获取当前日期
         let date = new Date().toLocaleDateString();

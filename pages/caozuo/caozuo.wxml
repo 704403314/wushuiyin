@@ -1,5 +1,6 @@
 <!--pages/caozuo/caozuo.wxml-->
-<ad unit-id="adunit-283bf81f0cd04f9d" ad-type="video" ad-theme="white"></ad>
+<!-- <ad unit-id="adunit-283bf81f0cd04f9d" ad-type="video" ad-theme="white"></ad> -->
+<ad unit-id="adunit-aed03e005affb742"></ad>
 <view class="divider"></view>
 <view style="margin-top: 5px;" class="tip">
   <text>• 视频下载：</text>
