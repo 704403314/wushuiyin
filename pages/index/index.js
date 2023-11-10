@@ -109,52 +109,52 @@ Page({
         })
         
         // const openid = wx.getStorageSync('openid')
-        const openid = ""
-        console.log("code:",e)
+        // const openid = ""
+        // console.log("code:",e)
         
-        console.log("openid start:",wx.getStorageSync('openid'))
+        // console.log("openid start:",wx.getStorageSync('openid'))
 
-        if (!openid) {
-            console.log("openid empty")
-            wx.login({
-                success: res => {
-                  console.log("登录成功 2")
-                  console.log(res)
-                  if (res.code) {
-                      let url = domain+"/etf/video/login"
-                      wx.request({
-                          url: url,
-                          data: {
-                              code:res.code
-                          },
-                          header: {
-                              'content-type': 'application/json' // 默认值
-                          },
-                          success (res) {
-                            console.log("login res:", res)
-                              if (res.data.code == 200) {
-                                  wx.setStorageSync('openid', res.data.data.openid)
-                              } else {
-                                  console.log(res)
+        // if (!openid) {
+        //     console.log("openid empty")
+        //     wx.login({
+        //         success: res => {
+        //           console.log("登录成功 2")
+        //           console.log(res)
+        //           if (res.code) {
+        //               let url = domain+"/etf/video/login"
+        //               wx.request({
+        //                   url: url,
+        //                   data: {
+        //                       code:res.code
+        //                   },
+        //                   header: {
+        //                       'content-type': 'application/json' // 默认值
+        //                   },
+        //                   success (res) {
+        //                     console.log("login res:", res)
+        //                       if (res.data.code == 200) {
+        //                           wx.setStorageSync('openid', res.data.data.openid)
+        //                       } else {
+        //                           console.log(res)
                                   
-                              }
+        //                       }
                               
-                          },
-                          fail(e) {
-                              console.log("调用接口失败", e)
+        //                   },
+        //                   fail(e) {
+        //                       console.log("调用接口失败", e)
                               
-                          }
-                      })
-                  }
-                }
-              })
-        }
+        //                   }
+        //               })
+        //           }
+        //         }
+        //       })
+        // }
         
         wx.request({
             url: 'https://www.tankhui.cn/video/share/url/parse', 
             data: {
                 url: v,
-                openid: wx.getStorageSync('openid')  
+                // openid: wx.getStorageSync('openid')  
             },
             header: {
                 'content-type': 'application/json' // 默认值
@@ -166,11 +166,11 @@ Page({
                     seeAd: true
                 })
                 // seeAd
-                if (res.data.msg == "New") {
-                    that.setData({
-                        seeAd: false
-                    })
-                }
+                // if (res.data.msg == "New") {
+                //     that.setData({
+                //         seeAd: false
+                //     })
+                // }
 
 
                 if (res.data.code == 200) {
@@ -188,10 +188,29 @@ Page({
                         duration: 1500//持续的时间
                     })
                 } else {
-                    wx.showToast({
-                        title: "链接不正确或暂不支持, 请重试",
-                        icon: 'none',
-                        duration: 4000//持续的时间
+                    // wx.showToast({
+                    //     title: "链接不正确或暂不支持, 请重试或者粘贴相同视频(或音频)在其他APP的链接",
+                    //     icon: 'none',
+                    //     duration: 5000//持续的时间
+                    // })
+                    wx.showModal({
+                        title: "解析失败", // 提示的标题
+                        content: "链接不正确或暂不支持,  请重试或者粘贴相同视频(音频)在其他APP的链接", // 提示的内容
+                        showCancel: false, // 是否显示取消按钮，默认true
+                        cancelText: "取消", // 取消按钮的文字，最多4个字符
+                        cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
+                        confirmText: "知道了", // 确认按钮的文字，最多4个字符
+                        confirmColor: "#576B95", // 确认按钮的文字颜色，必须是 16 进制格式的颜色字符串
+                        success: function (res) {
+                            console.log("接口调用成功的回调函数");
+                            
+                        },
+                        fail: function () {
+                            console.log("接口调用失败的回调函数");
+                        },
+                        complete: function () {
+                            console.log("接口调用结束的回调函数（调用成功、失败都会执行）");
+                        }
                     })
                 }
                 

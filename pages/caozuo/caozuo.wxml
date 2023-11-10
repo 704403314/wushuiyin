@@ -1,6 +1,6 @@
 <!--pages/caozuo/caozuo.wxml-->
-<!-- <ad unit-id="adunit-283bf81f0cd04f9d" ad-type="video" ad-theme="white"></ad> -->
-<ad unit-id="adunit-aed03e005affb742"></ad>
+<ad unit-id="adunit-283bf81f0cd04f9d" ad-type="video" ad-theme="white"></ad>
+<!-- <ad unit-id="adunit-aed03e005affb742"></ad> -->
 <view class="divider"></view>
 <view style="margin-top: 5px;" class="tip">
   <text>• 视频下载：</text>
@@ -32,9 +32,10 @@
 </view>
 
 <view class="content2"> 
-    <text> 1. 对于个别大文件的下载失败，可以点击解析后的"复制视频链接"按钮，，打开浏览器，访问粘贴的链接并下载视频</text>
-    <text>\n 2. 极少数情况解析不稳定，可以尝试重新点击"一键解析", 或者粘贴相同视频(音频)在其他APP的链接.</text>
-    <text>\n 3. 下载的资源超过500M,可能会下载失败,可以复制解析后的链接，在浏览器中打开，下载资源。</text>
+    <text> 1. 下载的资源超过500M,可能会下载失败,可以复制解析后的链接，在浏览器中打开，下载资源</text>
+    <text>\n 2. 极少数情况解析不稳定，可以尝试重新点击"一键解析", 或者粘贴相同MV(或音频)在其他APP的链接.</text>
+    <!-- <text>\n 3. 下载的资源超过500M,可能会下载失败,可以复制解析后的链接，在浏览器中打开，下载资源。</text> -->
+    <text>\n\n\n</text>
 </view>
   
 

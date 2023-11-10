@@ -1,0 +1,22 @@
+/* pages/dashang/dashang.wxss */
+.page-section-title{
+    font-size: 42rpx;
+    /* color: #bd5108; */
+    color: rgb(24, 187, 9);
+    margin-bottom: 10rpx;
+    padding-left: 290rpx;
+    padding-right: 30rpx;
+    line-height: 55rpx;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  .page-section-content{
+    font-size: 36rpx;
+    /* color: #bd5108; */
+    color: rgb(10, 10, 10);
+    margin-bottom: 10rpx;
+    padding-left: 30rpx;
+    padding-right: 30rpx;
+    line-height: 55rpx;
+    margin-top: 10px;
+  }

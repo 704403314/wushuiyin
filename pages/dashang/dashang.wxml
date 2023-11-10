@@ -1,0 +1,14 @@
+<!--pages/dashang/dashang.wxml-->
+<!-- <text>二维码自愿捐赠</text>
+<text>\n小程序需要开发、服务器成本，您的每一分支持，是我坚持下去的动力。</text> -->
+
+
+<view class="page-section-title"><text style="color: #db2e03;text-align: center;">自愿打赏</text>
+</view>
+<view class="page-section-content"><text style="color: #886902;"></text>小程序维护，需要开发、服务器成本，您的每一分支持，都是开发者长期维护的动力。
+</view>
+<view style="display: flex;justify-content: center;align-items: center;">
+
+    <image bindlongpress="handleLongTap" mode="aspectFit" style="width: 270px;height:360px;margin-top:30px;" src="/images/weixinzhifu.png"></image>
+</view>
+

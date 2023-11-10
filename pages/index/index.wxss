@@ -4,6 +4,7 @@
   align-items: center;
   height: 100vh;
   background-color: #f5f5f5;
+  margin-top: -20px;
 }
 
 .title {
@@ -130,7 +131,7 @@ textarea {
   .page-section-title{
     font-size: 36rpx;
     /* color: #bd5108; */
-    color: #886902;
+    color: rgb(24, 187, 9);
     margin-bottom: 10rpx;
     padding-left: 30rpx;
     padding-right: 30rpx;

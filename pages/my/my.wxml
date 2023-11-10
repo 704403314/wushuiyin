@@ -1,0 +1,98 @@
+<view class="bar-box" style="height: {{navBarHeight}}px;">
+    <view class="level" style="margin-top: {{barHeight}}px;">
+
+        <view class="bar-title" >个人中心</view>
+    </view>
+</view>
+
+<view class="head-box" style="padding-top: {{navBarHeight+20}}px;padding-bottom: 5px;">
+    <view class="level"  >
+       
+        <!-- <image   bindtap="headClick" class="top-head" src="{{headImage}}" mode="widthFix"></image>
+        <view class="welcome">
+                <text class="nick">{{nickname}}</text>
+        </view> -->
+
+        <!-- <view class="mine_user_container"> -->
+		<block  class="mine-userinfo">
+			<view class="mine-userinfo-left">
+				<button bind:chooseavatar="onChooseAvatar" class="mine-nouserinfo-avatar" open-type="chooseAvatar" bindgetuserinfo="bindGetUserInfo" style="background-image:url({{avatarUrl}}); width: 80px;height: 80px;" size="mini">></button>
+			</view>
+			
+		</block>
+	<!-- </view> -->
+
+
+        <!-- <button bind:chooseavatar="onChooseAvatar" class="mine-nouserinfo-avatar"  open-type="chooseAvatar" size="mini"><image  class="btnImg" src="{{avatarUrl}}"></image></button> -->
+
+
+        <view class="welcome">
+            <input bindblur="handleBlur" value="{{nickname}}" type="nickname" class="weui-input" placeholder="请输入昵称"/>
+            
+        </view>
+
+
+    </view>
+    
+</view>
+
+
+<!-- 二级菜单 -->
+<!-- <view class="level tab-box">
+    <block wx:for="{{tabList}}" wx:for-index="index" wx:for-item="item" wx:key="item">
+        <view class="tab-list" bindtap="tabClick" data-item="{{item}}">
+            <image class="tab-img" src="{{item.src}}" mode="widthFix"></image>
+            <view class="tab-text">{{item.title}}</view>
+        </view>
+    </block>
+</view> -->
+<view class="white-box">
+    <!-- <button class="row" style="width: 100%;" bindtap="basicClick">
+        <view class="left">
+            <icon type="success" size="16" color="#2979ff"></icon>
+            <text class="text">查询历史净值</text>
+        </view>
+        <image class="right" src="../../images/right.png" mode="widthFix"></image>
+
+    </button>
+    <button class="row" style="width: 100%;" bindtap="feedbackClick">
+        <view class="left">
+            <icon type="success" size="16" color="#2979ff"></icon>
+            <text class="text">查看自选</text>
+        </view>
+        <image class="right" src="../../images/right.png" mode="widthFix"></image>
+    </button>
+    <button class="row" style="width: 100%;" bindtap="aboutClick">
+        <view class="left">
+            <icon type="success" size="16" color="#2979ff"></icon>
+            <text class="text">指数估值信息</text>
+        </view>
+        <image class="right" src="../../images/right.png" mode="widthFix"></image>
+    </button> -->
+</view>
+<view class="white-box">
+    <button open-type="share" class="row" style="width: 100%;">
+        <view class="left">
+            <icon type="success" size="16" color="#19be6b"></icon>
+            <text class="text">分享给好友</text>
+        </view>
+        <image class="right" src="../../images/right.png" mode="widthFix"></image>
+    </button>
+    <button bindtap="dashang" class="row" style="width: 100%;border-bottom: none;">
+        <view class="left">
+            <icon type="success" size="16" color="#19be6b"></icon>
+            <text class="text">自愿打赏</text>
+        </view>
+        <image class="right" src="../../images/right.png" mode="widthFix"></image>
+    </button>
+</view>
+<view class="white-box">
+    <button class="row" style="width: 100%;border-bottom: none;">
+        <view class="left">
+            <icon type="success" size="16" color="#19be6b"></icon>
+            <text class="text">当前版本</text>
+        </view>
+        <view class="right" style="text-align: center;margin-right:15px">1.0.53</view>
+    </button>
+</view>
+

@@ -1,7 +1,9 @@
 {
     "pages": [
         "pages/index/index",
-        "pages/caozuo/caozuo"
+        "pages/caozuo/caozuo",
+        "pages/my/my",
+        "pages/dashang/dashang"
     ],
     "window": {
         "backgroundTextStyle": "light",
@@ -23,7 +25,13 @@
             "text": "操作说明",
             "iconPath": "images/caozuo.png",
             "selectedIconPath": "images/caozuo_s.png"
-          }
+          },
+          {
+            "pagePath": "pages/my/my",
+            "text": "我的",
+            "iconPath": "images/toublack.png",
+            "selectedIconPath": "images/toublue.png"
+        }
         ]
       },
     "style": "v2",
