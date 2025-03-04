@@ -40,7 +40,7 @@ Page({
             return
         }
         
-        console.log('videoUrl：', e.detail.value.videoUrl);
+        // console.log('videoUrl：', e.detail.value.videoUrl);
         var data =  e.detail.value.videoUrl;
         let regex = /http[s]?:\/\/[\w.-]+[\w\/-]*[\w.-]*\??[\w=&:\-\+\%]*[/]*/;
         
@@ -55,7 +55,7 @@ Page({
         const that = this
         wx.showModal({
             title: "温馨提示", // 提示的标题
-            content: "1. 本平台提供免费下载功能，版权归各视频、音乐平台所有，视频｜音频仅供个人观看，学习使用。因用户不当使用，导致的侵权行为，由用户承担相关责任。" + "\r\n\r\n" +"2. 下载的文件超过500M，可能会失败，可以复制解析后的链接，在浏览器中打开，下载资源。" + "\r\n\r\n" +"3. 遇到解析失败的情况，可以粘贴相同视频(或音频)在其他APP的链接，重新解析。", // 提示的内容
+            content: "1. 本平台提供免费下载功能，版权归各视频、音乐平台所有，视频｜音频仅供个人观看，学习使用。因用户不当使用，导致的侵权行为，由用户承担相关责任。" + "\r\n\r\n" +"2. 保存失败或下载的文件超过200M，建议复制解析后的链接，在浏览器中打开，下载资源。" + "\r\n\r\n" +"3. 遇到解析失败的情况，可以粘贴相同视频(或音频)在其他APP的链接，重新解析。", // 提示的内容
             showCancel: false, // 是否显示取消按钮，默认true
             cancelText: "取消", // 取消按钮的文字，最多4个字符
             cancelColor: "#000000", // 取消按钮的文字颜色，必须是16进制格式的颜色字符串
@@ -160,7 +160,7 @@ Page({
                 'content-type': 'application/json' // 默认值
             },
             success (res) {
-                console.log(res.data)
+                // console.log(res.data)
                 that.setData({
                     hidden: true,
                     seeAd: true
@@ -175,7 +175,7 @@ Page({
 
                 if (res.data.code == 200) {
                     
-                    console.log(res.data.data.video_url)
+                    // console.log(res.data.data.video_url)
                     that.setData({
                         copyLink: res.data.data.origin_url,
                         saveUrl: res.data.data.video_url,
@@ -295,12 +295,12 @@ Page({
             })
             try {
                 if (videoAd.closeHandler) {
-                    console.log("videoAd.offClose开始卸载");
+                    // console.log("videoAd.offClose开始卸载");
                     videoAd.offClose(videoAd.closeHandler);
-                    console.log("videoAd.offClose卸载成功");
+                    // console.log("videoAd.offClose卸载成功");
                 }
             } catch (e) {
-                console.log("videoAd.offClose 卸载失败");
+                // console.log("videoAd.offClose 卸载失败");
                 console.error(e);
             }
             videoAd.onLoad(() => {})
@@ -313,7 +313,7 @@ Page({
                     // 原始复制的代码
                     
                     if (this.data.onCopyVideoCloseCount == 0) {
-                        console.log("激励了一次")
+                        // console.log("激励了一次")
                         wx.setStorageSync('viewedAd', true);
                         this.setData({
                             onCopyVideoCloseCount: this.data.onCopyVideoCloseCount + 1
@@ -323,7 +323,7 @@ Page({
                     
                 } else {
                     // 播放中途退出,不下发游戏奖励
-                    console.log("播放中途退出,不下发游戏奖励")
+                    // console.log("播放中途退出,不下发游戏奖励")
                     // videoAd.show()
                 }
             })
@@ -400,12 +400,12 @@ Page({
             })
             try {
                 if (videoAd.closeHandler) {
-                    console.log("videoAd.offClose开始卸载");
+                    // console.log("videoAd.offClose开始卸载");
                     videoAd.offClose(videoAd.closeHandler);
-                    console.log("videoAd.offClose卸载成功");
+                    // console.log("videoAd.offClose卸载成功");
                 }
             } catch (e) {
-                console.log("videoAd.offClose 卸载失败");
+                // console.log("videoAd.offClose 卸载失败");
                 console.error(e);
             }
             videoAd.onLoad(() => {})
@@ -459,12 +459,12 @@ Page({
             })
             try {
                 if (videoAd.closeHandler) {
-                    console.log("videoAd.offClose开始卸载");
+                    // console.log("videoAd.offClose开始卸载");
                     videoAd.offClose(videoAd.closeHandler);
-                    console.log("videoAd.offClose卸载成功");
+                    // console.log("videoAd.offClose卸载成功");
                 }
             } catch (e) {
-                console.log("videoAd.offClose 卸载失败");
+                // console.log("videoAd.offClose 卸载失败");
                 console.error(e);
             }
 
@@ -559,11 +559,13 @@ Page({
             progressHidden: false
         })
         const that = this 
+        // console.log('------that.data.saveUrl', that.data.saveUrl)
         wx.downloadFile({
             url: that.data.saveUrl, // 视频资源地址
-        
+            
             success: res => {
             console.log('downloadFile成功回调res:', res)
+            
             let FilePath = res.tempFilePath; // 下载到本地获取临时路径
             let fileManager = wx.getFileSystemManager();
             if (res.statusCode === 504 || res.statusCode === 400 || res.statusCode === 500) {
@@ -620,14 +622,14 @@ Page({
                         fail(res) {
                             console.error(res,"unlink fail")
                             wx.showToast({
-                                title: '视频保存失败, 请重试',
+                                title: '视频保存失败, 请点击复制链接在浏览器中打开',
                                 duration: 4000,
                                 icon: 'none'
                             })
                         }
                     })
                     wx.showToast({
-                        title: '视频保存失败, 请点击复制链接在浏览器中打开',
+                        title: '保存失败, 请点击复制链接在浏览器中打开',
                         duration: 4000,
                         icon: 'none'
                     })
@@ -676,12 +678,12 @@ Page({
                     
             try {
                 if (videoAd.closeHandler) {
-                    console.log("videoAd.offClose开始卸载");
+                    // console.log("videoAd.offClose开始卸载");
                     videoAd.offClose(videoAd.closeHandler);
-                    console.log("videoAd.offClose卸载成功");
+                    // console.log("videoAd.offClose卸载成功");
                 }
             } catch (e) {
-                console.log("videoAd.offClose 卸载失败");
+                // console.log("videoAd.offClose 卸载失败");
                 console.error(e);
             }
 
@@ -784,7 +786,7 @@ Page({
         var mp4MusicUrl = that.data.musicUrl.replace("/music/download", "/music/mp4/download")
         // var mp4MusicUrl = mp4MusicUrl.replace("tankhui.cn", "tankhui.cn:8083")
 
-        console.log("musicUrl mp4", mp4MusicUrl)
+        // console.log("musicUrl mp4", mp4MusicUrl)
         wx.downloadFile({
             url: mp4MusicUrl, // 音频资源地址
             // filePath: wx.env.USER_DATA_PATH + '/videoCache/' +this.data.copyLink,
@@ -800,8 +802,8 @@ Page({
                             hidden: true,
                             progressHidden: false
                         })
-                      console.log('saveMp4ToPhotosAlbum成功回调file:', file)
-                      console.log('FilePath:', FilePath)
+                    //   console.log('saveMp4ToPhotosAlbum成功回调file:', file)
+                    //   console.log('FilePath:', FilePath)
                       wx.showToast({
                         title: '保存成功',
                         duration: 1500,
@@ -822,7 +824,7 @@ Page({
                             hidden: true,
                             progressHidden: false
                         })
-                      console.log('saveVideoToPhotosAlbum失败回调err:', err)
+                      console.log('----saveVideoToPhotosAlbum失败回调err:', err)
                       fileManager.unlink({ // 删除临时文件
                         filePath: FilePath,
                         success(res) {
@@ -831,14 +833,14 @@ Page({
                         fail(res) {
                             console.error(res,"unlink fail")
                             wx.showToast({
-                                title: '音频保存失败, 请重试',
+                                title: '音频保存失败, 请点击复制链接在浏览器中打开',
                                 duration: 4000,
                                 icon: 'none'
                               })
                         }
                       })
                       wx.showToast({
-                        title: '音频保存失败, 请点击复制链接在浏览器中打开',
+                        title: '保存失败, 请点击复制链接在浏览器中打开',
                         duration: 4000,
                         icon: 'none'
                       })
@@ -851,7 +853,7 @@ Page({
               
             },
             fail(e) {
-              console.log('失败e', e)
+            //   console.log('失败e', e)
               that.setData({
                     hidden: true,
                     progressHidden: false
@@ -943,36 +945,36 @@ Page({
         let viewedAdDate = wx.getStorageSync('viewedAdDate');
         
         // 如果没有观看过广告，或者观看过广告的日期不是今天，则将观看广告的标记重新设置为false
-        console.log("viewedAdDate:", viewedAdDate)
+        // console.log("viewedAdDate:", viewedAdDate)
         if (!viewedAdDate || viewedAdDate !== date) {
-           console.log("123")
+        //    console.log("123")
           wx.setStorageSync('viewedAd', false);
           wx.setStorageSync('viewedAdDate', date);
         }
         // 视频下载
         let viewedAdDownloadVideoDate = wx.getStorageSync('viewedAdDownloadVideoDate');
         
-        console.log("viewedAdDownloadVideoDate:", viewedAdDownloadVideoDate)
+        // console.log("viewedAdDownloadVideoDate:", viewedAdDownloadVideoDate)
         if (!viewedAdDownloadVideoDate || viewedAdDownloadVideoDate !== date) {
-           console.log("123")
+        //    console.log("123")
           wx.setStorageSync('viewedDownloadVideoAd', false);
           wx.setStorageSync('viewedAdDownloadVideoDate', date);
         }
         // 音频下载
         let viewedAdDownloadMusicDate = wx.getStorageSync('viewedAdDownloadMusicDate');
         
-        console.log("viewedAdDownloadMusicDate:", viewedAdDownloadMusicDate)
+        // console.log("viewedAdDownloadMusicDate:", viewedAdDownloadMusicDate)
         if (!viewedAdDownloadMusicDate || viewedAdDownloadMusicDate !== date) {
-           console.log("123")
+        //    console.log("123")
           wx.setStorageSync('viewedDownloadMusicAd', false);
           wx.setStorageSync('viewedAdDownloadMusicDate', date);
         }
 
 
-        console.log("wx.getStorageSync('viewedAdDate')", wx.getStorageSync('viewedAdDate'))
-        console.log("wx.getStorageSync('viewedAd')", wx.getStorageSync('viewedAd'))
-        console.log("wx.getStorageSync('viewedDownloadMusicAd')", wx.getStorageSync('viewedDownloadMusicAd'))
-        console.log("wx.getStorageSync('viewedDownloadVideoAd')", wx.getStorageSync('viewedDownloadVideoAd'))
+        // console.log("wx.getStorageSync('viewedAdDate')", wx.getStorageSync('viewedAdDate'))
+        // console.log("wx.getStorageSync('viewedAd')", wx.getStorageSync('viewedAd'))
+        // console.log("wx.getStorageSync('viewedDownloadMusicAd')", wx.getStorageSync('viewedDownloadMusicAd'))
+        // console.log("wx.getStorageSync('viewedDownloadVideoAd')", wx.getStorageSync('viewedDownloadVideoAd'))
 
     },
     onHide: function () {

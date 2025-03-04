@@ -3,7 +3,7 @@
         "pages/index/index",
         "pages/caozuo/caozuo",
         "pages/my/my",
-        "pages/dashang/dashang"
+        "pages/tuijian/tuijian"
     ],
     "window": {
         "backgroundTextStyle": "light",
@@ -11,33 +11,39 @@
         "navigationBarTitleText": "免费下载视频｜音频",
         "navigationBarTextStyle": "white"
     },
-    "tabBar":{
-        "position":"bottom",
-        "list":[
-          {
-            "pagePath":"pages/index/index",
-            "text":"视频|音频下载",
-            "iconPath":"images/shipin.png",
-            "selectedIconPath":"images/shipin_s.png"
-          },
-          {
-            "pagePath": "pages/caozuo/caozuo",
-            "text": "操作说明",
-            "iconPath": "images/caozuo.png",
-            "selectedIconPath": "images/caozuo_s.png"
-          },
-          {
-            "pagePath": "pages/my/my",
-            "text": "我的",
-            "iconPath": "images/toublack.png",
-            "selectedIconPath": "images/toublue.png"
-        }
+    "tabBar": {
+        "position": "bottom",
+        "list": [
+            {
+                "pagePath": "pages/index/index",
+                "text": "视频|音频下载",
+                "iconPath": "images/shipin.png",
+                "selectedIconPath": "images/shipin_s.png"
+            },
+            {
+                "pagePath": "pages/caozuo/caozuo",
+                "text": "操作说明",
+                "iconPath": "images/caozuo.png",
+                "selectedIconPath": "images/caozuo_s.png"
+            },
+            {
+                "pagePath": "pages/my/my",
+                "text": "我的",
+                "iconPath": "images/toublack.png",
+                "selectedIconPath": "images/toublue.png"
+            }
         ]
-      },
+    },
     "style": "v2",
     "sitemapLocation": "sitemap.json",
     "networkTimeout": {
         "request": 300000,
-        "downloadFile": 900000
+        "downloadFile": 400000
+    },
+    "plugins": {
+        "wxacommentplugin": {
+            "version": "latest",
+            "provider": "wx82e6ae1175f264fa"
+        }
     }
 }

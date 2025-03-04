@@ -1,0 +1,10 @@
+<view class="page-section-title"><text style="color: #dbbb03;text-align: center;">推荐作者其他小程序</text>
+</view>
+
+
+<button class="copy" style="margin-top:37px;background-color: rgb(59, 211, 105);font-size: 17px;color:white" bindtap="redirectGusuan" > 沐阳辉估算助手</button>
+<text>\n</text>
+<view class="page-section-content" style="text-align: center;"><text style="color: #4b8f0c;text-align: center;">• 获取基金的实时估值、历史业绩、持仓信息，可添加自选。</text>
+
+</view>
+<!-- <button class="copy" style="margin-top:37px;background-color: rgb(59, 211, 105);font-size: 17px;color:white" bindtap="redirectAI" > AI生成内容工具</button> -->

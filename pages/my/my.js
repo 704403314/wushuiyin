@@ -1,4 +1,6 @@
 const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
+const domain = "https://www.tankhui.cn"
+
 Page({
     /**
      * 页面的初始数据
@@ -33,6 +35,7 @@ Page({
             this.setData({
                 avatarUrl: avatarUrl
             })
+            wx.setStorageSync('avatarUrl', avatarUrl)
         }
     },
     handleBlur(event) {
@@ -51,6 +54,11 @@ Page({
     dashang() {
         wx.navigateTo({
             url: '/pages/dashang/dashang'
+          });
+    },
+    tuijian() {
+        wx.navigateTo({
+            url: '/pages/tuijian/tuijian'
           });
     },
     
@@ -115,6 +123,21 @@ Page({
                 })
             }
         })
+
+        const nickname = wx.getStorageSync('nickname')
+        if (nickname) {
+            this.setData({
+                nickname: nickname
+            })
+        }
+
+        const avatarUrl = wx.getStorageSync('avatarUrl')
+        if (avatarUrl) {
+            this.setData({
+                avatarUrl: avatarUrl
+            })
+            wx.setStorageSync('avatarUrl', avatarUrl)
+        }
     },
     onShareAppMessage: function () {
         return {
@@ -127,5 +150,120 @@ Page({
             title: "视频无水印下载,提取短视频音频",
             imageUrl: "../../images/fenxiang.png"
         };
+    },
+    pingjia() {
+        var plugin = requirePlugin("wxacommentplugin");
+        var _this = this;
+        const openid = wx.getStorageSync('openid')
+
+        plugin.openComment({
+          success: (result)=>{
+            console.log('plugin.openComment success', result)
+            if (!openid) {
+                wx.login({
+                    success: res => {
+                    // 发送 res.code 到后台换取 openId, sessionKey, unionId
+                        if (res.code) {
+                            let codeUrl = domain+"/etf/video/login"
+                            wx.request({
+                                url: codeUrl, 
+                                data: {
+                                    code:res.code
+                                },
+                                header: {
+                                    'content-type': 'application/json' // 默认值
+                                },
+                                success (res) {
+                                    if (res.data.code == 200) {
+                                        _this.saveComment(res.data.data.openid, 'success', result)
+                                    }
+                                    
+                                },
+                                fail(e) {
+                                    console.log("get openid error")
+                                }
+                            })
+                        }
+                                
+                    },
+                    fail(e) {
+                        console.log("调用接口失败", e)
+                        
+                    }
+                })
+            } else {
+                _this.saveComment(openid, 'success', result)
+            }
+              
+        },
+
+
+          fail: (result) =>{
+            console.log('plugin.openComment fail', result)
+
+            if (!openid) {
+                wx.login({
+                    success: res => {
+                    // 发送 res.code 到后台换取 openId, sessionKey, unionId
+                        if (res.code) {
+                            let codeUrl = domain+"/etf/video/login"
+                            wx.request({
+                                url: codeUrl, 
+                                data: {
+                                    code:res.code
+                                },
+                                header: {
+                                    'content-type': 'application/json' // 默认值
+                                },
+                                success (res) {
+                                    if (res.data.code == 200) {
+                                        //   let fundUrl = domain+"/etf/login"
+                                        _this.saveComment(res.data.data.openid, 'fail', result)
+                                    }
+                                    
+                                },
+                                fail(e) {
+                                    console.log("get openid error")
+                                }
+                            })
+                        }
+                                
+                    },
+                    fail(e) {
+                        console.log("调用接口失败", e)
+                        
+                    }
+                })
+            } else {
+                _this.saveComment(openid, 'fail', result)
+            }
+          }
+        })
+        
+    },
+
+    saveComment: function(openid, result, response) {
+        console.log("saveComment start")
+        console.log("response", response)
+        let url = domain+"/fund/comment"
+        wx.request({
+            url: url,
+            method: 'POST',
+            data: {
+                result: result,
+                openid: openid,
+                response: response.errMsg
+            },
+            header: {
+                'content-type': 'application/json' // 默认值
+            },
+            success (res) {
+                console.log("saveComment 调用接口成功", res)
+                
+            },
+            fail(e) {
+                console.log("saveComment 调用接口失败", e)
+            }
+        })
     },
 })

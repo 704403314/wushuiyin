@@ -73,26 +73,34 @@
 <view class="white-box">
     <button open-type="share" class="row" style="width: 100%;">
         <view class="left">
-            <icon type="success" size="16" color="#19be6b"></icon>
+            <image style="width: 20px;height:20px;" src="../../images/share.png" ></image>
             <text class="text">分享给好友</text>
         </view>
-        <image class="right" src="../../images/right.png" mode="widthFix"></image>
+        <image style="height:15px;width: 15px;" class="right" src="../../images/right.png" mode="widthFix"></image>
     </button>
-    <button bindtap="dashang" class="row" style="width: 100%;border-bottom: none;">
+    <button bindtap="pingjia" class="row" style="width: 100%;">
         <view class="left">
-            <icon type="success" size="16" color="#19be6b"></icon>
-            <text class="text">自愿打赏</text>
+            <image style="width: 20px;height:20px;" src="../../images/haoping.png" ></image>
+            <text class="text">体验评价</text>
         </view>
-        <image class="right" src="../../images/right.png" mode="widthFix"></image>
+        <image style="height:15px;width: 15px;" style="height:15px;width: 15px;" class="right" src="../../images/right.png" mode="widthFix"></image>
+    </button>
+    <button bindtap="tuijian" class="row" style="width: 100%;border-bottom: none;">
+        <view class="left">
+            <image style="width: 20px;height:20px;" src="../../images/gengduo.png" ></image>
+            <text class="text">更多作品</text>
+        </view>
+        <image style="height:15px;width: 15px;" class="right" src="../../images/right.png" mode="widthFix"></image>
     </button>
 </view>
 <view class="white-box">
     <button class="row" style="width: 100%;border-bottom: none;">
         <view class="left">
-            <icon type="success" size="16" color="#19be6b"></icon>
+            <image style="width: 20px;height:20px;" src="../../images/banben.png" ></image>
+
             <text class="text">当前版本</text>
         </view>
-        <view class="right" style="text-align: center;margin-right:15px">1.0.53</view>
+        <view class="right" style="text-align: center;margin-right:15px">1.1.11</view>
     </button>
 </view>
 
