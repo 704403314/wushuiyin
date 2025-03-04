@@ -291,7 +291,7 @@ Page({
         // 在页面onLoad回调事件中创建激励视频广告实例
         if (wx.createRewardedVideoAd) {
             videoAd = wx.createRewardedVideoAd({
-                adUnitId: 'adunit-052ed3c0d5e20c89'
+                adUnitId: 'adunit-e79ef43a712de5cd'
             })
             try {
                 if (videoAd.closeHandler) {
@@ -455,7 +455,7 @@ Page({
         // 在页面onLoad回调事件中创建激励视频广告实例
         if (wx.createRewardedVideoAd) {
             videoAd = wx.createRewardedVideoAd({
-                adUnitId: 'adunit-40a5841cb54a089f'
+                adUnitId: 'adunit-e79ef43a712de5cd'
             })
             try {
                 if (videoAd.closeHandler) {
@@ -673,7 +673,7 @@ Page({
         // 在页面onLoad回调事件中创建激励视频广告实例
         if (wx.createRewardedVideoAd) {
             videoAd = wx.createRewardedVideoAd({
-                adUnitId: 'adunit-c06784d3e3dc5629'
+                adUnitId: 'adunit-e79ef43a712de5cd'
             })
                     
             try {
